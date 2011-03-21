@@ -6,6 +6,7 @@ select count(*) from ipdw_respostas where semestre_id = '21';
 select total_respostas from ipdw_semestre s where s.semestre_id = '21'; -- ??
 
 
+
 select * from ipdw_disciplina where disciplina_id = '1237';
 --- 1.b. ---------------------------------------------------------
 select count(*) from ipdw_respostas where disciplina_id = '1237';
@@ -45,32 +46,81 @@ where d.sigla = 'FPRO';
 
 
 
-select count(*)
+select disciplina_id, count(semestre_id) counter, avg(resposta) average
 from ipdw_respostas
-where semestre_id = '1'; -- 42961 rows
-select count(*)
-from ipdw_respostas
-where semestre_id = '21'; -- 351671 rows
+where semestre_id = '21'
+group by disciplina_id
+having count(semestre_id) > 300
+order by average desc;
 
-select semestre_id, count(semestre_id) cnt
-from ipdw_respostas
-group by semestre_id;
+select *
+from (
+  select disciplina_id, count(semestre_id) counter, avg(resposta) average
+  from ipdw_respostas
+  where semestre_id = '21'
+  group by disciplina_id
+  having count(semestre_id) > 300
+  order by average desc) 
+where rownum = 1;
+--- 2.b. ---------------------------------------------------------
+select temp.disciplina_id, sigla
+from
+  (select disciplina_id, count(semestre_id) counter, avg(resposta) average
+  from ipdw_respostas
+  where semestre_id = '21'
+  group by disciplina_id
+  having count(semestre_id) > 300
+  order by average desc) temp
+inner join ipdw_disciplina
+on temp.disciplina_id = ipdw_disciplina.disciplina_id
+where rownum = 1;
 
-select semestre_id, disciplina_id, count(semestre_id) cnt
-from ipdw_respostas
-group by semestre_id, disciplina_id;
 
-select semestre_id, disciplina_id, count(semestre_id) cnt
-from ipdw_respostas
-group by semestre_id, disciplina_id;
 
-select semestre_id, disciplina_id, count(semestre_id) cnt
-from ipdw_respostas
-group by semestre_id, disciplina_id
-having count(semestre_id) > 300;
+--- 2.c. ---------------------------------------------------------
+-- : (
 
-select semestre_id, disciplina_id, count(semestre_id) counter, avg(resposta) average
+
+
+--- 3.a.i -------------------------------------------------------
+select disciplina_id
+from ipdw_disciplina
+where disciplina_id not in
+  (select distinct disciplina_id
+  from ipdw_respostas);
+--- 3.a.ii. ------------------------------------------------------
+select /*+RULE*/ disciplina_id
+from ipdw_disciplina
+where disciplina_id not in 
+  (select distinct disciplina_id
+  from ipdw_respostas);
+
+
+
+--- 3.b.i. -------------------------------------------------------
+select d.disciplina_id
+from ipdw_disciplina d
+left outer join ipdw_respostas r
+on d.disciplina_id = r.disciplina_id
+where r.disciplina_id is null;
+--- 3.b.ii. -------------------------------------------------------
+select /*+RULE*/ d.disciplina_id
+from ipdw_disciplina d
+left outer join ipdw_respostas r
+on d.disciplina_id = r.disciplina_id
+where r.disciplina_id is null;
+
+
+
+--- 4.a. ---------------------------------------------------------
+
+
+
+/* 
+select disciplina_id, pergunta_id, count(pergunta_id) count
 from ipdw_respostas
-group by semestre_id, disciplina_id
-having count(semestre_id) > 300;
+where semestre_id = '21'
+group by disciplina_id, pergunta_id;
+*/
+--- 4.b. ---------------------------------------------------------
 
