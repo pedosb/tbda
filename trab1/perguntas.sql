@@ -44,8 +44,7 @@ inner join ipdw_disciplina d
 on r.disciplina_id = d.disciplina_id
 where d.sigla = 'FPRO';
 
-
-
+--- 2.b. ---------------------------------------------------------
 select disciplina_id, count(semestre_id) counter, avg(resposta) average
 from ipdw_respostas
 where semestre_id = '21'
@@ -62,7 +61,7 @@ from (
   having count(semestre_id) > 300
   order by average desc) 
 where rownum = 1;
---- 2.b. ---------------------------------------------------------
+
 select temp.disciplina_id, sigla
 from
   (select disciplina_id, count(semestre_id) counter, avg(resposta) average
@@ -78,9 +77,40 @@ where rownum = 1;
 
 
 --- 2.c. ---------------------------------------------------------
--- : (
+-- : ( 
+-- : |
+select pergunta_id from ipdw_pergunta where nome = 'Apreciação Global';
+select disciplina_id, pergunta_id, count(id)
+  from ipdw_respostas
+  where semestre_id = 21 --and pergunta_id = (select pergunta_id from ipdw_pergunta where nome = 'Apreciação Global')
+  group by disciplina_id, pergunta_id
+  having count(id) > 300;
 
-
+select resultado.disciplina_id, ipdw_disciplina.sigla from (
+  select ipdw_respostas.disciplina_id, avg(resposta)
+    from
+      ipdw_respostas
+    where
+      semestre_id = '21' and
+      pergunta_id = (select pergunta_id from ipdw_pergunta where nome = 'Apreciação Global')
+    group by
+      ipdw_respostas.disciplina_id
+    having
+      count(id) > 100 and
+      (avg(resposta)+0.1) > (
+        select avg(resposta)--, count(id)--, disciplina_id
+          from
+            ipdw_respostas
+          where
+            semestre_id = '21' and
+            pergunta_id = (select pergunta_id from ipdw_pergunta where nome = 'Apreciação Global')
+      --group by disciplina_id
+          having
+          count(id) > 100)) resultado
+  inner join
+    ipdw_disciplina
+  on
+    ipdw_disciplina.disciplina_id = resultado.disciplina_id;
 
 --- 3.a.i -------------------------------------------------------
 select disciplina_id
