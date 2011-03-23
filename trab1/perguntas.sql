@@ -97,7 +97,7 @@ select resultado.disciplina_id, ipdw_disciplina.sigla from (
       ipdw_respostas.disciplina_id
     having
       count(id) > 100 and
-      (avg(resposta)+0.1) > (
+      (avg(resposta)-0.1) > (
         select avg(resposta)--, count(id)--, disciplina_id
           from
             ipdw_respostas
@@ -279,5 +279,5 @@ from (
 select distinct pergunta_id
 from ipdw_respostas
 where semestre_id = 21);
-
 select * from ipdw_respostas;
+
