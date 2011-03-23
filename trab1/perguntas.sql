@@ -144,6 +144,23 @@ where r.disciplina_id is null;
 
 --- 4.a. ---------------------------------------------------------
 
+select disciplina_id from (
+  select disciplina, count(disciplina) num_resp_com_5 from (
+    select distinct pergunta_id, disciplina_id
+      from
+        ipdw_respostas
+      where
+        resposta  = 5 and
+        semesetre_id = 21)
+    group by disciplina)
+  where
+  num_resp_com_5 = (select count(pergunta_id)
+    from (
+      select distinct pergunta_id
+        from ipdw_respostas
+        where semestre_id = 21));
+
+--Rascunho
 select with_5.disciplina_id, ipdw_pergunta.pergunta_id from
   ipdw_pergunta
   --,ipdw_respostas
