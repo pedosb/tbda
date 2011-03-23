@@ -1,0 +1,91 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[top=3cm, bottom=2cm, left=3cm, right=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{verbatim}
+\usepackage{float}
+\floatstyle{ruled}
+\newfloat{program}{thp}{lop}
+\floatname{program}{Program}
+
+
+
+\title{Tecnologia de Bases de Dados\\
+Otimização de Interrogações}
+
+\author{André Fernandes (ei03107) \and Pedro Batista (ext10392)}
+
+\begin{document}
+
+\maketitle
+
+\begin{program}
+\verbatiminput{respostas/1-a.sql}
+\caption{Query da questão 1-b.}
+\label{sql:1-a}
+\end{program}
+
+\begin{program}
+\verbatiminput{respostas/1-b.sql}
+\caption{Query da questão 1-b.}
+\label{sql:1-b}
+\end{program}
+
+\begin{program}
+\verbatiminput{respostas/1-c.sql}
+\caption{Query da questão 1-c.}
+\label{sql:1-c}
+\end{program}
+
+\begin{program}
+\verbatiminput{respostas/2-a.sql}
+\caption{Query da questão 2-a.}
+\label{sql:2-a}
+\end{program}
+
+\begin{program}
+\verbatiminput{respostas/2-b.sql}
+\caption{Query da questão 2-b.}
+\label{sql:2-b}
+\end{program}
+
+\begin{program}
+\verbatiminput{respostas/2-c.sql}
+\caption{Query da questão 2-c.}
+\label{sql:2-c}
+\end{program}
+
+\begin{program}
+\verbatiminput{respostas/3-a-i.sql}
+\caption{Query da questão 3 baseada em ``not in'' com otimizador no modo CHOOSE.}
+\label{sql:3-a.i}
+\end{program}
+
+\begin{program}
+\verbatiminput{respostas/3-a-ii.sql}
+\caption{Query da questão 3 baseada em ``not in'' com otimizador no modo RULE.}
+\label{sql:3-a.ii}
+\end{program}
+
+\begin{program}
+\verbatiminput{respostas/3-b.i.sql}
+\caption{Query da questão 3 baseada em junção externa e filtragem para nulo com otimizador no modo CHOOSE.}
+\label{sql:3-b.i}
+\end{program}
+
+\begin{program}
+\verbatiminput{respostas/3-b.ii.sql}
+\caption{Query da questão 3 baseada em junção externa e filtragem para nulo com otimizador no modo RULE.}
+\label{sql:3-b.ii}
+\end{program}
+
+\begin{program}
+\verbatiminput{respostas/4.ii.sql}
+\caption{Query da questão 4 utilizando o método da contagem.}
+\label{4.ii.sql}
+\end{program}
+
+\end{document}
