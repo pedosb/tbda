@@ -1,12 +1,10 @@
--- select * from all_tables;
--- select * from all_tables where owner = 'GTD2';
+DROP TABLE ipdw_respostas;
+DROP TABLE ipdw_disciplina;
+DROP TABLE ipdw_pergunta;
+DROP TABLE ipdw_semestre;
 
-drop table ipdw_disciplina;
-drop table ipdw_pergunta;
-drop table ipdw_semestre;
-drop table ipdw_respostas;
 
-create table ipdw_disciplina as (select * from gtd2.ipdw_disciplina);
-create table ipdw_pergunta as (select * from gtd2.ipdw_pergunta);
-create table ipdw_semestre as (select * from gtd2.ipdw_semestre);
-create table ipdw_respostas as (select * from gtd2.ipdw_respostas);
+CREATE TABLE ipdw_disciplina AS (SELECT * FROM gtd2.ipdw_disciplina);
+CREATE TABLE ipdw_pergunta AS (SELECT * FROM gtd2.ipdw_pergunta);
+CREATE TABLE ipdw_semestre AS (SELECT * FROM gtd2.ipdw_semestre);
+CREATE TABLE ipdw_respostas AS (SELECT * FROM gtd2.ipdw_respostas);

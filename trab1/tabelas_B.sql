@@ -1,40 +1,32 @@
-drop table ipdw_disciplina;
-drop table ipdw_pergunta;
-drop table ipdw_semestre;
-drop table ipdw_respostas;
-
-create table ipdw_disciplina as (select * from gtd2.ipdw_disciplina);
-create table ipdw_pergunta as (select * from gtd2.ipdw_pergunta);
-create table ipdw_semestre as (select * from gtd2.ipdw_semestre);
-create table ipdw_respostas as (select * from gtd2.ipdw_respostas);
+DROP TABLE ipdw_respostas;
+DROP TABLE ipdw_disciplina;
+DROP TABLE ipdw_pergunta;
+DROP TABLE ipdw_semestre;
 
 
-alter table ipdw_disciplina
-add constraint disciplina_pk
-  primary key (disciplina_id);
-
-alter table ipdw_pergunta
-add constraint pergunta_pk
-  primary key (pergunta_id);
-
-alter table ipdw_semestre
-add constraint semestre_pk
-  primary key (semestre_id);
+CREATE TABLE ipdw_disciplina AS (SELECT * FROM gtd2.ipdw_disciplina);
+CREATE TABLE ipdw_pergunta AS (SELECT * FROM gtd2.ipdw_pergunta);
+CREATE TABLE ipdw_semestre AS (SELECT * FROM gtd2.ipdw_semestre);
+CREATE TABLE ipdw_respostas AS (SELECT * FROM gtd2.ipdw_respostas);
 
 
-alter table ipdw_respostas
-add constraint semestre_fk
-  foreign key (semestre_id)
-  references ipdw_semestre(semestre_id);
+ALTER TABLE ipdw_disciplina ADD CONSTRAINT disciplina_pk
+PRIMARY KEY (disciplina_id);
+
+ALTER TABLE ipdw_pergunta ADD CONSTRAINT pergunta_pk
+PRIMARY KEY (pergunta_id);
+
+ALTER TABLE ipdw_semestre ADD CONSTRAINT semestre_pk
+PRIMARY KEY (semestre_id);
+
+
+ALTER TABLE ipdw_respostas ADD CONSTRAINT semestre_fk
+FOREIGN KEY (semestre_id) REFERENCES ipdw_semestre(semestre_id);
   
-alter table ipdw_respostas
-add constraint pergunta_fk
-  foreign key (pergunta_id)
-  references ipdw_pergunta(pergunta_id);
+ALTER TABLE ipdw_respostas ADD CONSTRAINT pergunta_fk
+FOREIGN KEY (pergunta_id) REFERENCES ipdw_pergunta(pergunta_id);
 
-alter table ipdw_respostas
-add constraint disciplina_fk
-  foreign key (disciplina_id)
-  references ipdw_disciplina(disciplina_id);
+ALTER TABLE ipdw_respostas ADD CONSTRAINT disciplina_fk
+FOREIGN KEY (disciplina_id) REFERENCES ipdw_disciplina(disciplina_id);
 
 
