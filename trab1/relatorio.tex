@@ -168,6 +168,14 @@ um BITMAP, pois dessa forma é mais fácil verificar a intercessão dos ROWID.
    \caption{Plano de execução para a Query \ref{sql:2-c}.}
 \end{figure}
 
+As análises anteriormente feitas quando ao uso do índice também se aplicam
+a Query~\ref{sql:3-a-i}. O que notamos de novo nessa questão foi sua comparação
+com dos modos do otimizador, observamos que ao usar o modo CHOOSE esse tomou uma
+melhor decisão, evitando produto cartesiano completo, utilizando alternativas
+como o Hash Join. Já no modo RULE (Query~\ref{sql:3-a-ii}) ele escolheu o produto
+cartesiano e depois um filtro para gerar apenas o que lhe interessa, tornando
+o processamento mais pesado.  O que pode ser comprovado na Tabela~\ref{tab:tempo}.
+
 \begin{program}
    \verbatiminput{respostas/3-a-i.sql}
    \caption{Questão 3 baseada em ``not in'' com otimizador no modo CHOOSE.}
@@ -200,6 +208,10 @@ um BITMAP, pois dessa forma é mais fácil verificar a intercessão dos ROWID.
    \label{fig:plano_3-a-ii}
 \end{figure}
 
+Outra comparação dos modos do otimizador é introduzida entre as Queries~\ref{sq:3-b-i} e \ref{3-b-ii}.
+Porém podemos observar nesse caso o caráter opcional da sugestão introduzida na query para o modo RULE.
+Pois é mostrado nos seus planos de execução que foi escolhido exatamente o mesmo esquema.
+
 \begin{program}
    \verbatiminput{respostas/3-b.i.sql}
    \caption{Questão 3 baseada em junção externa e filtragem para nulo com otimizador no modo CHOOSE.}
@@ -231,6 +243,11 @@ um BITMAP, pois dessa forma é mais fácil verificar a intercessão dos ROWID.
    \caption{Plano de execução para a Query \ref{sql:3-b-ii}.}
    \label{fig:plano_3-b-ii}
 \end{figure}
+
+Nas Queries ~\ref{sql:4-i} e~\ref{sql:4-ii} observamos novamente as otimizações que
+os índices possibilitam. Podemos notar também que fazer operações de filtragem custou
+menos do que fazer a negações, pois estas últimas implicaram em muitas comparações.
+O que foi refletido no tempo de execução mostrado na Tabela~\ref{tab:tempo}.
 
 \begin{program}
    \verbatiminput{respostas/4.i.sql}
