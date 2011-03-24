@@ -25,6 +25,12 @@ Otimização de Interrogações}
 
 \maketitle
 
+Para a Query~\ref{sql:1-a} observamos que o caso B tem um custo
+ligeiramente maior que o caso A, pois foram adicionadas chaves estrangeiras.
+Já no caso C observamos um custo bem menor, pois o filtro é aplicado
+somente na chave, necessitando dessa forma buscar na tabela apenas as linhas que
+atendem a condição.
+
 \begin{program}
    \verbatiminput{respostas/1-a.sql}
    \caption{Questão 1-a.}
@@ -40,6 +46,11 @@ Otimização de Interrogações}
    \caption{Plano de execução para a Query \ref{sql:1-a}.}
    \label{fig:plano_1-a}
 \end{figure}
+
+Na Query~\ref{sql:1-b} entre os casos A e B também foi observado um aumento
+devido a chave estrangeira. No caso C observamos um custo bem menor
+do que o no caso C da Query~\ref{sql:1-a}, pois a seletividade de disciplina\_id
+é bem maior que a de semestre\_id.
 
 \begin{program}
    \verbatiminput{respostas/1-b.sql}
@@ -57,6 +68,11 @@ Otimização de Interrogações}
    \label{fig:plano_1-b}
 \end{figure}
 
+Para a Query~\ref{sql:1-c} nos casos A e B a análise anterior também se aplica.
+No caso C observamos que não foi necessário fazer um acesso completo a tabela ipdw\_respostas,
+pois um index foi criado em sua coluna semestre\_id. Dessa forma se tornou viável a
+a pesquisa sequencial através de um Nested Loop ao invés de um Hash Join.
+
 \begin{program}
    \verbatiminput{respostas/1-c.sql}
    \caption{Questão 1-c.}
@@ -72,6 +88,13 @@ Otimização de Interrogações}
    \caption{Plano de execução para a Query \ref{sql:1-c}.}
    \label{fig:plano_1-c}
 \end{figure}
+
+Na Query~\ref{sql:2-a} notamos o efeito da adição do index na coluna disciplina\_id
+da tabela respostas, e na sigla da tabela disciplina. Pois foi possível selecionar
+os ids das disciplinas de interesse e fazer um Nested Loop utilizando apenas
+indexes da tabela respostas. Dessa forma apenas valores do resultado foram
+acessados na tabela respostas utilizando os ROWID adquiridos no Nested Loop.
+O que minimizou o número de acessos.
 
 \begin{program}
    \verbatiminput{respostas/2-a.sql}
@@ -89,6 +112,10 @@ Otimização de Interrogações}
    \label{fig:plano_2-a}
 \end{figure}
 
+Para a Query~\ref{sql:2-b} o index na coluna semestre\_id da tabela resposta
+permitiu evitar um acesso completo a tabela. Pois o filtro foi feito
+pelo index. Minimizando assim o volume de dados no restante do processo.
+
 \begin{program}
    \verbatiminput{respostas/2-b.sql}
    \caption{Questão 2-b.}
@@ -104,6 +131,12 @@ Otimização de Interrogações}
    \caption{Plano de execução para a Query \ref{sql:2-b}.}
    \label{fig:plano_2-b}
 \end{figure}
+
+Na Query~\ref{sql:2-c} os indices novamente evitaram acessos a tabela, mais uma vez
+através dele foi possível fazer um filtro. Uma nova forma de utilização deste
+também foi mostrada nessa situação, após filtrado, para facilitar o AND que garante
+que o disciplina\_id é o 21 e que a pergunta é ``Apreciação Global'' foi formado
+um BITMAP, pois dessa forma é mais fácil verificar a intercessão dos ROWID.
 
 \begin{program}
    \verbatiminput{respostas/2-c.sql}
