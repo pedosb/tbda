@@ -113,7 +113,7 @@ O que minimizou o número de acessos.
    \label{fig:plano_2-a}
 \end{figure}
 
-Para a Query~\ref{sql:2-b} o índica na coluna semestre\_id da tabela das respostas
+A Query~\ref{sql:2-b}  indica que na coluna semestre\_id da tabela das respostas
 permitiu evitar um acesso completo à tabela. Pois o filtro foi feito
 pelo índice. Minimizando assim o volume de dados no restante do processo.
 
@@ -133,11 +133,11 @@ pelo índice. Minimizando assim o volume de dados no restante do processo.
    \label{fig:plano_2-b}
 \end{figure}
 
-Na Query~\ref{sql:2-c} os índices evitaram novamente acessos a tabela. Mais uma vez
-através do mesmo foi possível fazer um filtro. Uma nova forma de utilização deste
+Na Query~\ref{sql:2-c} os índices evitaram novamente acessos à tabela através
+de filtração prévia. Uma nova forma de utilização dos índices 
 foi também mostrada, após filtragem, ao facilitar o AND lógico que garante
-que o disciplina\_id é o 21 e que a pergunta é ``Apreciação Global''. Assim foi formado
-um BITMAP, pois dessa forma é mais fácil verificar a intercessão dos ROWID.
+que o disciplina\_id é o 21 e que a pergunta é ``Apreciação Global''. Através da formação
+de um BITMAP, pois dessa forma é mais fácil verificar a intercessão dos ROWID.
 
 \begin{program}
    \verbatiminput{respostas/2-c.sql}
@@ -170,12 +170,12 @@ um BITMAP, pois dessa forma é mais fácil verificar a intercessão dos ROWID.
 \end{figure}
 
 As análises anteriormente feitas quando ao uso do índice também se aplicam
-a Query~\ref{sql:3-a-i}. O que notamos de novo nessa questão foi sua comparação
-com dos modos do otimizador, observamos que ao usar o modo CHOOSE esse tomou uma
+a Query~\ref{sql:3-a-i}. O que notámos de novo nessa questão foi a sua comparação
+com dos modos do otimizador, observámos que ao usar o modo CHOOSE esse tomou uma
 melhor decisão, evitando produto cartesiano completo, utilizando alternativas
 como o Hash Join. Já no modo RULE (Query~\ref{sql:3-a-ii}) ele escolheu o produto
-cartesiano e depois um filtro para gerar apenas o que lhe interessa, tornando
-o processamento mais pesado.  O que pode ser comprovado na Tabela~\ref{tab:tempo}.
+cartesiano e depois um filtro para gerar apenas o que lhe interessava, tornando
+o processamento mais pesado. O que pode ser comprovado na Tabela~\ref{tab:tempo}.
 
 \begin{program}
    \verbatiminput{respostas/3-a-i.sql}
@@ -211,7 +211,7 @@ o processamento mais pesado.  O que pode ser comprovado na Tabela~\ref{tab:tempo
 
 Outra comparação dos modos do otimizador é introduzida entre as Queries~\ref{sq:3-b-i} e \ref{3-b-ii}.
 Porém podemos observar nesse caso o caráter opcional da sugestão introduzida na query para o modo RULE.
-Pois é mostrado nos seus planos de execução que foi escolhido exatamente o mesmo esquema.
+Pois é mostrado nos planos de execução que foi escolhido exatamente o mesmo esquema.
 
 \begin{program}
    \verbatiminput{respostas/3-b.i.sql}
@@ -246,8 +246,8 @@ Pois é mostrado nos seus planos de execução que foi escolhido exatamente o me
 \end{figure}
 
 Nas Queries ~\ref{sql:4-i} e~\ref{sql:4-ii} observamos novamente as otimizações que
-os índices possibilitam. Podemos notar também que fazer operações de filtragem custou
-menos do que fazer a negações, pois estas últimas implicaram em muitas comparações.
+os índices possibilitam. Podemos notar também que fazer operações de filtragem custaram
+menos do que fazer a negações, pois estas últimas implicaram muitas mais comparações.
 O que foi refletido no tempo de execução mostrado na Tabela~\ref{tab:tempo}.
 
 \begin{program}
