@@ -36,6 +36,24 @@ alter table ipdw_respostas
 add constraint disciplina_fk
   foreign key (disciplina_id)
   references ipdw_disciplina(disciplina_id);
-  
---select * from user_indexes;
---create index coluna_idx on tabela(coluna);
+
+
+select * from user_indexes;
+drop index respostas_semestre_idx;
+drop index respostas_disciplina_idx;
+drop index disciplina_sigla_idx;
+
+-- 1-a 1-c 2-b 2-c 4-i 4-ii
+create index respostas_semestre_idx on ipdw_respostas(semestre_id);
+-- 1-b 2-a 2-b 3-a-i 3-a-ii 3-b-i 3-b-ii 4-i
+create index respostas_disciplina_idx on ipdw_respostas(disciplina_id);
+-- 2-b
+create index respostas_pergunta_idx on ipdw_respostas(pergunta_id);
+-- 4-i 4-ii
+create index respostas_resposta_idx on ipdw_respostas(resposta);
+-- 2-a
+create index disciplina_sigla_idx on ipdw_disciplina(sigla);
+-- 2-c
+create index pergunta_nome_idx on ipdw_pergunta(nome);
+
+
