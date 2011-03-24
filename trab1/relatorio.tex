@@ -3,15 +3,18 @@
 \usepackage[top=3cm, bottom=2cm, left=3cm, right=2cm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[portuguese]{babel}
+\usepackage{graphicx}
+\graphicspath{{./planos_execucao/}}
+\usepackage{subfig}
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{verbatim}
+
 \usepackage{float}
+\usepackage{morefloats}
 \floatstyle{ruled}
 \newfloat{program}{thp}{lop}
-\floatname{program}{Program}
-
-
+\floatname{program}{Query}
 
 \title{Tecnologia de Bases de Dados\\
 Otimização de Interrogações}
@@ -23,69 +26,253 @@ Otimização de Interrogações}
 \maketitle
 
 \begin{program}
-\verbatiminput{respostas/1-a.sql}
-\caption{Query da questão 1-b.}
-\label{sql:1-a}
+   \verbatiminput{respostas/1-a.sql}
+   \caption{Questão 1-a.}
+   \label{sql:1-a}
 \end{program}
 
-\begin{program}
-\verbatiminput{respostas/1-b.sql}
-\caption{Query da questão 1-b.}
-\label{sql:1-b}
-\end{program}
+\begin{figure}[thp]
+   \begin{center}
+      \subfloat[Situação A]{\label{fig:plano_1-a_A}\includegraphics[width=1\textwidth]{1-a_A}}\\
+      \subfloat[Situação B]{\label{fig:plano_1-a_B}\includegraphics[width=1\textwidth]{1-a_B}}\\
+      \subfloat[Situação C]{\label{fig:plano_1-a_C}\includegraphics[width=1\textwidth]{1-a_C}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:1-a}.}
+   \label{fig:plano_1-a}
+\end{figure}
 
 \begin{program}
-\verbatiminput{respostas/1-c.sql}
-\caption{Query da questão 1-c.}
-\label{sql:1-c}
+   \verbatiminput{respostas/1-b.sql}
+   \caption{Questão 1-b.}
+   \label{sql:1-b}
 \end{program}
 
-\begin{program}
-\verbatiminput{respostas/2-a.sql}
-\caption{Query da questão 2-a.}
-\label{sql:2-a}
-\end{program}
+\begin{figure}[hpt]
+   \begin{center}
+      \subfloat[Situação A]{\label{fig:plano_1-b_A}\includegraphics[width=1\textwidth]{1-b_A}}\\
+      \subfloat[Situação B]{\label{fig:plano_1-b_B}\includegraphics[width=1\textwidth]{1-b_B}}\\
+      \subfloat[Situação C]{\label{fig:plano_1-b_C}\includegraphics[width=1\textwidth]{1-b_C}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:1-b}.}
+   \label{fig:plano_1-b}
+\end{figure}
 
 \begin{program}
-\verbatiminput{respostas/2-b.sql}
-\caption{Query da questão 2-b.}
-\label{sql:2-b}
+   \verbatiminput{respostas/1-c.sql}
+   \caption{Questão 1-c.}
+   \label{sql:1-c}
 \end{program}
 
-\begin{program}
-\verbatiminput{respostas/2-c.sql}
-\caption{Query da questão 2-c.}
-\label{sql:2-c}
-\end{program}
+\begin{figure}[hpt]
+   \begin{center}
+      \subfloat[Situação A]{\label{fig:plano_1-c_A}\includegraphics[width=1\textwidth]{1-c_A}}\\
+      \subfloat[Situação B]{\label{fig:plano_1-c_B}\includegraphics[width=1\textwidth]{1-c_B}}\\
+      \subfloat[Situação C]{\label{fig:plano_1-c_C}\includegraphics[width=1\textwidth]{1-c_C}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:1-c}.}
+   \label{fig:plano_1-c}
+\end{figure}
 
 \begin{program}
-\verbatiminput{respostas/3-a-i.sql}
-\caption{Query da questão 3 baseada em ``not in'' com otimizador no modo CHOOSE.}
-\label{sql:3-a.i}
+   \verbatiminput{respostas/2-a.sql}
+   \caption{Questão 2-a.}
+   \label{sql:2-a}
 \end{program}
 
-\begin{program}
-\verbatiminput{respostas/3-a-ii.sql}
-\caption{Query da questão 3 baseada em ``not in'' com otimizador no modo RULE.}
-\label{sql:3-a.ii}
-\end{program}
+\begin{figure}[hpt]
+   \begin{center}
+      \subfloat[Situação A]{\label{fig:plano_2-a_A}\includegraphics[width=1\textwidth]{2-a_A}}\\
+      \subfloat[Situação B]{\label{fig:plano_2-a_B}\includegraphics[width=1\textwidth]{2-a_B}}\\
+      \subfloat[Situação C]{\label{fig:plano_2-a_C}\includegraphics[width=1\textwidth]{2-a_C}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:2-a}.}
+   \label{fig:plano_2-a}
+\end{figure}
 
 \begin{program}
-\verbatiminput{respostas/3-b.i.sql}
-\caption{Query da questão 3 baseada em junção externa e filtragem para nulo com otimizador no modo CHOOSE.}
-\label{sql:3-b.i}
+   \verbatiminput{respostas/2-b.sql}
+   \caption{Questão 2-b.}
+   \label{sql:2-b}
 \end{program}
 
-\begin{program}
-\verbatiminput{respostas/3-b.ii.sql}
-\caption{Query da questão 3 baseada em junção externa e filtragem para nulo com otimizador no modo RULE.}
-\label{sql:3-b.ii}
-\end{program}
+\begin{figure}[hpt]
+   \begin{center}
+      \subfloat[Situação A]{\label{fig:plano_2-b_A}\includegraphics[width=1\textwidth]{2-b_A}}\\
+      \subfloat[Situação B]{\label{fig:plano_2-b_B}\includegraphics[width=1\textwidth]{2-b_B}}\\
+      \subfloat[Situação C]{\label{fig:plano_2-b_C}\includegraphics[width=1\textwidth]{2-b_C}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:2-b}.}
+   \label{fig:plano_2-b}
+\end{figure}
 
 \begin{program}
-\verbatiminput{respostas/4.ii.sql}
-\caption{Query da questão 4 utilizando o método da contagem.}
-\label{4.ii.sql}
+   \verbatiminput{respostas/2-c.sql}
+   \caption{Questão 2-c.}
+   \label{sql:2-c}
 \end{program}
+
+\begin{figure}[hpt]
+   \begin{center}
+      \subfloat[Situação A]{\label{fig:plano_2-c_A}\includegraphics[width=1\textwidth]{2-c_A}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:2-c}.}
+   \label{fig:plano_2-c}
+\end{figure}
+
+\begin{figure}[hpt]
+   \begin{center}
+      \ContinuedFloat
+      \subfloat[Situação B]{\label{fig:plano_2-c_B}\includegraphics[width=1\textwidth]{2-c_B}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:2-c}.}
+\end{figure}
+
+\begin{figure}[hpt]
+   \begin{center}
+      \ContinuedFloat
+      \subfloat[Situação C]{\label{fig:plano_2-c_C}\includegraphics[width=1\textwidth]{2-c_C}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:2-c}.}
+\end{figure}
+
+\begin{program}
+   \verbatiminput{respostas/3-a-i.sql}
+   \caption{Questão 3 baseada em ``not in'' com otimizador no modo CHOOSE.}
+   \label{sql:3-a-i}
+\end{program}
+
+\begin{figure}[hpt]
+   \begin{center}
+      \subfloat[Situação A]{\label{fig:plano_3-a-i_A}\includegraphics[width=1\textwidth]{3-a-i_A}}\\
+      \subfloat[Situação B]{\label{fig:plano_3-a-i_B}\includegraphics[width=1\textwidth]{3-a-i_B}}\\
+      \subfloat[Situação C]{\label{fig:plano_3-a-i_C}\includegraphics[width=1\textwidth]{3-a-i_C}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:3-a-i}.}
+   \label{fig:plano_3-a-i}
+\end{figure}
+
+\begin{program}
+   \verbatiminput{respostas/3-a-ii.sql}
+   \caption{Questão 3 baseada em ``not in'' com otimizador no modo RULE.}
+   \label{sql:3-a-ii}
+\end{program}
+
+\begin{figure}[hpt]
+   \begin{center}
+      \subfloat[Situação A]{\label{fig:plano_3-a-ii_A}\includegraphics[width=1\textwidth]{3-a-ii_A}}\\
+      \subfloat[Situação B]{\label{fig:plano_3-a-ii_B}\includegraphics[width=1\textwidth]{3-a-ii_B}}\\
+      \subfloat[Situação C]{\label{fig:plano_3-a-ii_C}\includegraphics[width=1\textwidth]{3-a-ii_C}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:3-a-ii}.}
+   \label{fig:plano_3-a-ii}
+\end{figure}
+
+\begin{program}
+   \verbatiminput{respostas/3-b.i.sql}
+   \caption{Questão 3 baseada em junção externa e filtragem para nulo com otimizador no modo CHOOSE.}
+   \label{sql:3-b-i}
+\end{program}
+
+\begin{figure}[hpt]
+   \begin{center}
+      \subfloat[Situação A]{\label{fig:plano_3-b-i_A}\includegraphics[width=1\textwidth]{3-b-i_A}}\\ 
+      \subfloat[Situação B]{\label{fig:plano_3-b-i_B}\includegraphics[width=1\textwidth]{3-b-i_B}}\\
+      \subfloat[Situação C]{\label{fig:plano_3-b-i_C}\includegraphics[width=1\textwidth]{3-b-i_C}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:3-b-i}.}
+   \label{fig:plano_3-b-i}
+\end{figure}
+
+\begin{program}
+   \verbatiminput{respostas/3-b.ii.sql}
+   \caption{Questão 3 baseada em junção externa e filtragem para nulo com otimizador no modo RULE.}
+   \label{sql:3-b-ii}
+\end{program}
+
+\begin{figure}[hpt]
+   \begin{center}
+      \subfloat[Situação A]{\label{fig:plano_3-b-ii_A}\includegraphics[width=1\textwidth]{3-b-ii_A}}\\
+      \subfloat[Situação B]{\label{fig:plano_3-b-ii_B}\includegraphics[width=1\textwidth]{3-b-ii_B}}\\
+      \subfloat[Situação C]{\label{fig:plano_3-b-ii_C}\includegraphics[width=1\textwidth]{3-b-ii_C}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:3-b-ii}.}
+   \label{fig:plano_3-b-ii}
+\end{figure}
+
+\begin{program}
+   \verbatiminput{respostas/4.i.sql}
+   \caption{Questão 4 utilizando o método da dupla negação.}
+   \label{sql:4-i}
+\end{program}
+
+\begin{figure}[hpt]
+   \begin{center}
+      \subfloat[Situação A]{\label{fig:plano_4-i_A}\includegraphics[width=1\textwidth]{4-i_A}}\\
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:4-i}.}
+   \label{fig:plano_4-i}
+\end{figure}
+
+\begin{figure}[hpt]
+   \ContinuedFloat
+   \begin{center}
+      \subfloat[Situação B]{\label{fig:plano_4-i_B}\includegraphics[width=1\textwidth]{4-i_B}}\\
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:4-i}.}
+\end{figure}
+
+\begin{figure}[hpt]
+   \ContinuedFloat
+   \begin{center}
+      \subfloat[Situação C]{\label{fig:plano_4-i_C}\includegraphics[width=1\textwidth]{4-i_C}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:4-i}.}
+\end{figure}
+
+\begin{program}
+   \verbatiminput{respostas/4.ii.sql}
+   \caption{Questão 4 utilizando o método da contagem.}
+   \label{sql:4-ii}
+\end{program}
+
+\begin{figure}[hpt]
+   \begin{center}
+      \subfloat[Situação A]{\label{fig:plano_4-ii_A}\includegraphics[width=1\textwidth]{4-ii_A}}\\
+      \subfloat[Situação B]{\label{fig:plano_4-ii_B}\includegraphics[width=1\textwidth]{4-ii_B}}\\
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:4-ii}.}
+   \label{fig:plano_4-ii}
+\end{figure}
+
+\begin{figure}[hpt]
+   \ContinuedFloat
+   \begin{center}
+      \subfloat[Situação C]{\label{fig:plano_4-ii_C}\includegraphics[width=1\textwidth]{4-ii_C}}
+   \end{center}
+   \caption{Plano de execução para a Query \ref{sql:4-ii}.}
+\end{figure}
+
+\begin{table}[hpt]
+   \centering
+   \begin{tabular}{c c c c}
+      \toprule
+      \multirow{2}{*}{Query} & \multicolumn{3}{c}{Contexto} \\\cline{2-4}
+      & A & B & C \\\midrule
+      \ref{sql:1-a} & 0.483 & 0.495 & 0.077 \\\midrule
+      \ref{sql:1-b} & 0.639 & 0.517 & 0.019 \\\midrule
+      \ref{sql:1-c} & 1.238 & 1.108 & 0.077 \\\midrule
+      \ref{sql:2-a} & 1.223 & 1.106 & 0.028 \\\midrule
+      \ref{sql:2-b} & 0.781 & 0.654 & 0.638 \\\midrule
+      \ref{sql:2-c} & 1.304 & 1.037 & 0.42 \\\midrule
+      \ref{sql:3-a-i} & 1.272 & 1.093 & 0.477 \\\midrule
+      \ref{sql:3-a-ii} & 313.036 & 235.074 & 242.722 \\\midrule
+      \ref{sql:3-b-i} & 2.002 & 1.084 & 0.067 \\\midrule
+      \ref{sql:3-b-ii} & 1.885 & 1.064 & 0.046 \\\midrule
+      \ref{sql:4-i} & 8.903 & 4.178 & 4.551 \\\midrule
+      \ref{sql:4-ii} & 2.039 & 1.199 & 0.753 \\\bottomrule
+   \end{tabular}
+   \caption{Tempo de execução (segundos) das queries nos contextos A, B e C.}
+   \label{tab:tempo}
+\end{table}
 
 \end{document}
