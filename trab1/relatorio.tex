@@ -25,10 +25,10 @@ Otimização de Interrogações}
 
 \maketitle
 
-Para a Query~\ref{sql:1-a} observamos que o caso B tem um custo
-ligeiramente maior que o caso A, pois foram adicionadas chaves estrangeiras.
-Já no caso C observamos um custo bem menor, pois o filtro é aplicado
-somente na chave, necessitando dessa forma buscar na tabela apenas as linhas que
+Na Query~\ref{sql:1-a} observamos que a situação B tem um custo
+ligeiramente maior do que a situação A, pois as chaves estrangeiras foram adicionadas ao esquema.
+Já na situação C observamos um custo bem menor, pois o filtro é aplicado
+somente na chave, sendo só preciso pesquisar na tabela apenas as linhas que
 atendem a condição.
 
 \begin{program}
@@ -47,10 +47,11 @@ atendem a condição.
    \label{fig:plano_1-a}
 \end{figure}
 
-Na Query~\ref{sql:1-b} entre os casos A e B também foi observado um aumento
-devido a chave estrangeira. No caso C observamos um custo bem menor
-do que o no caso C da Query~\ref{sql:1-a}, pois a seletividade de disciplina\_id
-é bem maior que a de semestre\_id.
+
+Na Query~\ref{sql:1-b} entre as situações A e B também foi observado um aumento do custo
+devido à introdução da chave estrangeira. No caso C observamos um custo bem menor
+do que no caso C da Query~\ref{sql:1-a}, pois a seletividade de disciplina\_id
+é bem maior do que a do semestre\_id.
 
 \begin{program}
    \verbatiminput{respostas/1-b.sql}
@@ -68,9 +69,9 @@ do que o no caso C da Query~\ref{sql:1-a}, pois a seletividade de disciplina\_id
    \label{fig:plano_1-b}
 \end{figure}
 
-Para a Query~\ref{sql:1-c} nos casos A e B a análise anterior também se aplica.
-No caso C observamos que não foi necessário fazer um acesso completo a tabela ipdw\_respostas,
-pois um index foi criado em sua coluna semestre\_id. Dessa forma se tornou viável a
+Para a Query~\ref{sql:1-c} nos casos A e B, a análise anterior também se aplica.
+No caso C observámos que não foi necessário fazer um acesso completo à tabela ipdw\_respostas,
+pois o índice foi criado na coluna semestre\_id. Dessa forma tornou-se possível 
 a pesquisa sequencial através de um Nested Loop ao invés de um Hash Join.
 
 \begin{program}
@@ -89,11 +90,11 @@ a pesquisa sequencial através de um Nested Loop ao invés de um Hash Join.
    \label{fig:plano_1-c}
 \end{figure}
 
-Na Query~\ref{sql:2-a} notamos o efeito da adição do index na coluna disciplina\_id
-da tabela respostas, e na sigla da tabela disciplina. Pois foi possível selecionar
+Na Query~\ref{sql:2-a} notámos o efeito da adição do índice na coluna disciplina\_id
+da tabela das respostas, e na sigla da tabela das disciplinas. Pois foi possível selecionar
 os ids das disciplinas de interesse e fazer um Nested Loop utilizando apenas
-indexes da tabela respostas. Dessa forma apenas valores do resultado foram
-acessados na tabela respostas utilizando os ROWID adquiridos no Nested Loop.
+índices da tabela das respostas. Desta forma apenas valores do resultado foram
+acessados na tabela das respostas atravs dos ROWID adquiridos no Nested Loop.
 O que minimizou o número de acessos.
 
 \begin{program}
@@ -112,9 +113,9 @@ O que minimizou o número de acessos.
    \label{fig:plano_2-a}
 \end{figure}
 
-Para a Query~\ref{sql:2-b} o index na coluna semestre\_id da tabela resposta
-permitiu evitar um acesso completo a tabela. Pois o filtro foi feito
-pelo index. Minimizando assim o volume de dados no restante do processo.
+Para a Query~\ref{sql:2-b} o índica na coluna semestre\_id da tabela das respostas
+permitiu evitar um acesso completo à tabela. Pois o filtro foi feito
+pelo índice. Minimizando assim o volume de dados no restante do processo.
 
 \begin{program}
    \verbatiminput{respostas/2-b.sql}
@@ -132,10 +133,10 @@ pelo index. Minimizando assim o volume de dados no restante do processo.
    \label{fig:plano_2-b}
 \end{figure}
 
-Na Query~\ref{sql:2-c} os indices novamente evitaram acessos a tabela, mais uma vez
-através dele foi possível fazer um filtro. Uma nova forma de utilização deste
-também foi mostrada nessa situação, após filtrado, para facilitar o AND que garante
-que o disciplina\_id é o 21 e que a pergunta é ``Apreciação Global'' foi formado
+Na Query~\ref{sql:2-c} os índices evitaram novamente acessos a tabela. Mais uma vez
+através do mesmo foi possível fazer um filtro. Uma nova forma de utilização deste
+foi também mostrada, após filtragem, ao facilitar o AND lógico que garante
+que o disciplina\_id é o 21 e que a pergunta é ``Apreciação Global''. Assim foi formado
 um BITMAP, pois dessa forma é mais fácil verificar a intercessão dos ROWID.
 
 \begin{program}
