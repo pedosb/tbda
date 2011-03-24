@@ -71,7 +71,7 @@ do que no caso C da Query~\ref{sql:1-a}, pois a seletividade de disciplina\_id
 
 Para a Query~\ref{sql:1-c} nos casos A e B, a análise anterior também se aplica.
 No caso C observámos que não foi necessário fazer um acesso completo à tabela ipdw\_respostas,
-pois o índice foi criado na coluna semestre\_id. Dessa forma tornou-se possível 
+pois foi criado um índice na coluna semestre\_id. Dessa forma tornou-se possível 
 a pesquisa sequencial através de um Nested Loop ao invés de um Hash Join.
 
 \begin{program}
@@ -94,7 +94,7 @@ Na Query~\ref{sql:2-a} notámos o efeito da adição do índice na coluna discip
 da tabela das respostas, e na sigla da tabela das disciplinas. Pois foi possível selecionar
 os ids das disciplinas de interesse e fazer um Nested Loop utilizando apenas
 índices da tabela das respostas. Desta forma apenas valores do resultado foram
-acessados na tabela das respostas atravs dos ROWID adquiridos no Nested Loop.
+acessados na tabela das respostas através dos ROWID adquiridos no Nested Loop.
 O que minimizou o número de acessos.
 
 \begin{program}
@@ -134,8 +134,8 @@ pelo índice. Minimizando assim o volume de dados no restante do processo.
 \end{figure}
 
 Na Query~\ref{sql:2-c} os índices evitaram novamente acessos à tabela através
-de filtração prévia. Uma nova forma de utilização dos índices 
-foi também mostrada, após filtragem, ao facilitar o AND lógico que garante
+de uma filtração prévia. Uma nova forma de utilização dos índices 
+foi utilizada, após filtragem, para determinar AND lógico que garante
 que o disciplina\_id é o 21 e que a pergunta é ``Apreciação Global''. Através da formação
 de um BITMAP, pois dessa forma é mais fácil verificar a intercessão dos ROWID.
 
@@ -169,11 +169,11 @@ de um BITMAP, pois dessa forma é mais fácil verificar a intercessão dos ROWID
    \caption{Plano de execução para a Query \ref{sql:2-c}.}
 \end{figure}
 
-As análises anteriormente feitas quando ao uso do índice também se aplicam
-a Query~\ref{sql:3-a-i}. O que notámos de novo nessa questão foi a sua comparação
-com dos modos do otimizador, observámos que ao usar o modo CHOOSE esse tomou uma
-melhor decisão, evitando produto cartesiano completo, utilizando alternativas
-como o Hash Join. Já no modo RULE (Query~\ref{sql:3-a-ii}) ele escolheu o produto
+As análises anteriormente realizadas quanto ao uso do índice também se aplicam
+na Query~\ref{sql:3-a-i}. O que notámos de novo nesta questão foi a sua comparação
+com dos modos do otimizador, observámos que ao usar o modo CHOOSE o otimizador tomou uma
+melhor decisão, evitando produto cartesiano completo, utilizando como alternativa
+o Hash Join. Já no modo RULE (Query~\ref{sql:3-a-ii}) ele escolheu o produto
 cartesiano e depois um filtro para gerar apenas o que lhe interessava, tornando
 o processamento mais pesado. O que pode ser comprovado na Tabela~\ref{tab:tempo}.
 
@@ -209,9 +209,9 @@ o processamento mais pesado. O que pode ser comprovado na Tabela~\ref{tab:tempo}
    \label{fig:plano_3-a-ii}
 \end{figure}
 
-Outra comparação dos modos do otimizador é introduzida entre as Queries~\ref{sq:3-b-i} e \ref{3-b-ii}.
-Porém podemos observar nesse caso o caráter opcional da sugestão introduzida na query para o modo RULE.
-Pois é mostrado nos planos de execução que foi escolhido exatamente o mesmo esquema.
+Outra comparação dos modos do otimizador é introduzida pelas Queries~\ref{sq:3-b-i} e \ref{3-b-ii}.
+Porém podemos observar que, nesse caso, o caráter opcional da sugestão introduzida na query para o modo RULE.
+Ou seja, o plano de execução para o modo RULE foi exatamente o mesmo do modo CHOOSE, com o custo associado.
 
 \begin{program}
    \verbatiminput{respostas/3-b.i.sql}
@@ -245,9 +245,9 @@ Pois é mostrado nos planos de execução que foi escolhido exatamente o mesmo e
    \label{fig:plano_3-b-ii}
 \end{figure}
 
-Nas Queries ~\ref{sql:4-i} e~\ref{sql:4-ii} observamos novamente as otimizações que
-os índices possibilitam. Podemos notar também que fazer operações de filtragem custaram
-menos do que fazer a negações, pois estas últimas implicaram muitas mais comparações.
+Nas Queries ~\ref{sql:4-i} e~\ref{sql:4-ii} observámos, novamente, as otimizações que
+os índices possibilitam. Podemos notar também que fazer operações de filtração custou
+menos do que fazer as operações de negação, pois estas últimas implicaram muitas mais comparações.
 O que foi refletido no tempo de execução mostrado na Tabela~\ref{tab:tempo}.
 
 \begin{program}
@@ -326,15 +326,14 @@ O que foi refletido no tempo de execução mostrado na Tabela~\ref{tab:tempo}.
    \label{tab:tempo}
 \end{table}
 
-O desenvolvimento deste trabalho nos permitiu aplicar os conceitos visto em
-aulas teoricas, através deste podemos perceber que de modo geral a inclusão
-de indíces é essencial para a otimização das perguntas SQL. O que é
-justificado na Tabela ~\ref{tab:tempo}, pois podemos verificar que
-o tempo de execução diminui~\footnote{Os valores são apenas para
-referência, pois não foi possível conservar o contexto para todas as
-perguntas.} quando adicionamos os índices. Essa experiencia
-nos permitiu também, compreender as ações do otimizador Oracle e
-nos familiarizar com seu modo de apresentação do plano de execução
-das queries.
+O desenvolvimento deste trabalho permitiu-nos aplicar os conceitos das 
+aulas teóricas. Através deste trabalho podemos perceber que de um modo geral,
+a inclusão de índices está justificado na Tabela ~\ref{tab:tempo}. Onde
+podemos verificar que o tempo de execução diminui~\footnote{Os valores são apenas para
+referência, pois não foi possível conservar o mesmo contexto de execução em todas as
+perguntas.} quando adicionamos os índices. Essa experiência
+permitiu também, compreender as ações do otimizador Oracle e
+a familiarização com o seu modo de apresentação do plano de execução
+de queries.
 
 \end{document}
