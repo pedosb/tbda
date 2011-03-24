@@ -6,12 +6,14 @@ INNER JOIN
   WHERE disciplina_id NOT IN
     (SELECT disciplina_id_sem_5
     FROM
-      (SELECT DISTINCT disciplina_id disciplina_id_sem_5, pergunta_id pergunta_id_sem_5
+      (SELECT DISTINCT disciplina_id disciplina_id_sem_5,
+        pergunta_id pergunta_id_sem_5
       FROM ipdw_respostas
       WHERE resposta != 5
       AND semestre_id = 21)
     LEFT OUTER JOIN
-      (SELECT DISTINCT disciplina_id disciplina_id_com_5, pergunta_id pergunta_id_com_5
+      (SELECT DISTINCT disciplina_id disciplina_id_com_5,
+        pergunta_id pergunta_id_com_5
       FROM ipdw_respostas
       WHERE resposta = 5
       AND semestre_id = 21)

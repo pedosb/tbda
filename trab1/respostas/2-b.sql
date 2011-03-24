@@ -1,6 +1,7 @@
 SELECT temp.disciplina_id, sigla
 FROM
-  (SELECT disciplina_id, COUNT(semestre_id) counter, AVG(resposta) average
+  (SELECT disciplina_id, COUNT(semestre_id) counter,
+    AVG(resposta) average
   FROM ipdw_respostas
   WHERE semestre_id = '21'
   GROUP BY disciplina_id
