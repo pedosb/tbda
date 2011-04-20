@@ -34,8 +34,28 @@
 	\end{figure}
 
 \section{Modelo relacional}
-
-
+	
+	\begin{tabular}{|c|l|} \hline
+		\multicolumn{2}{|c|}{TOPICO} \\ \hline
+		Codigo & Tipo \\ \hline
+		titulo & VARCHAR(25) \\
+		alteracao & DATETIME \\ \hline 
+		\end{tabular}
+	
+	\begin{tabular}{|c|l|} \hline
+		\multicolumn{2}{|c|}{REFERENCIA\_TOPICO} \\ \hline
+		Codigo & Tipo \\ \hline
+		de & INTEGER \\
+		para & INTEGER \\ \hline
+		\end{tabular}
+	
+	\begin{tabular}{|c|l|} \hline
+		\multicolumn{2}{|c|}{REFERENCIA} \\ \hline
+		Codigo & Tipo \\ \hline
+		de & INTEGER \\
+		para & INTEGER \\ \hline
+		\end{tabular}
+	
 \section{Modelo de dados}
 
 	\begin{multicols}{2}
@@ -102,7 +122,7 @@
 		\end{tabular}
 		
 		\begin{tabular}{|c|l|} \hline
-		S\_CATEGORIA & SET(CATEGORIA) \\ \hline
+		S\_CATEGORIA & SET(REF CATEGORIA) \\ \hline
 		\end{tabular}
 		
 		\begin{tabular}{|c|l|} \hline
