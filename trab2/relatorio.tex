@@ -34,112 +34,184 @@
 	\end{figure}
 
 \section{Modelo relacional}
-	
-	\begin{tabular}{|c|l|} \hline
-		\multicolumn{2}{|c|}{TOPICO} \\ \hline
-		Codigo & Tipo \\ \hline
-		titulo & VARCHAR(25) \\
-		alteracao & DATETIME \\ \hline 
-		\end{tabular}
-	
-	\begin{tabular}{|c|l|} \hline
-		\multicolumn{2}{|c|}{REFERENCIA\_TOPICO} \\ \hline
-		Codigo & Tipo \\ \hline
-		de & INTEGER \\
-		para & INTEGER \\ \hline
-		\end{tabular}
-	
-	\begin{tabular}{|c|l|} \hline
-		\multicolumn{2}{|c|}{REFERENCIA} \\ \hline
-		Codigo & Tipo \\ \hline
-		de & INTEGER \\
-		para & INTEGER \\ \hline
-		\end{tabular}
-	
-\section{Modelo de dados}
 
 	\begin{multicols}{2}
+
 		\begin{tabular}{|c|l|} \hline
-		\multirow{4}{*}{TOPICO}
-		& titulo VARCHAR(25) \\
-		& alteracao DATETIME \\ 
-		& categorias S\_CATEGORIA \\
-		& referencias S\_TOPICO\\ \hline 
+			\multicolumn{2}{|c|}{TOPICO} \\ \hline
+			Codigo & Tipo \\ \hline
+			id & INTEGER \\
+			titulo & VARCHAR(25) \\
+			alteracao & DATETIME \\
+			tipo & VARCHAR(11) \\
+			tipo\_id & INTEGER \\ \hline
 		\end{tabular}
 		
 		\begin{tabular}{|c|l|} \hline
-		\multirow{4}{*}{CONTATO}
-		& nome VARCHAR(25) \\
-		& telefones S\_TELEFONE \\ 
-		& moradas S\_MORADA \\
-		& email VARCHAR(100) \\ 
-		& url VARCHAR(200) \\ \hline 
+			\multicolumn{2}{|c|}{REFERENCIA\_TOPICO} \\ \hline
+			Codigo & Tipo \\ \hline
+			de\_topico\_id  & INTEGER \\
+			para\_topico\_id & INTEGER \\ \hline
 		\end{tabular}
 		
 		\begin{tabular}{|c|l|} \hline
-		\multirow{2}{*}{CALENDARIO}
-		& p PERIODO \\
-		& r REPETICAO \\ \hline 
+			\multicolumn{2}{|c|}{CATEGORIA} \\ \hline
+			Codigo & Tipo \\ \hline
+			id & INTEGER \\
+			nome & VARCHAR(25) \\
+			categoria\_pai\_id & INTEGER \\ \hline
+		\end{tabular}
+			
+		\begin{tabular}{|c|l|} \hline
+			\multicolumn{2}{|c|}{CONTATO} \\ \hline
+			Codigo & Tipo \\ \hline
+			id & INTEGER \\
+			nome & VARCHAR(100) \\ 
+			email & VARCHAR(100) \\
+			url & VARCHAR(200) \\ \hline
+		\end{tabular}
+
+		\begin{tabular}{|c|l|} \hline
+			\multicolumn{2}{|c|}{CALENDARIO} \\ \hline
+			Codigo & Tipo \\ \hline
+			id & INTEGER \\
+			periodo\_id & INTEGER \\ 
+			repeticao\_id & INTEGER \\ \hline
 		\end{tabular}
 		
 		\begin{tabular}{|c|l|} \hline
-		\multirow{3}{*}{TAREFA}
-		& fim DATETIME \\
-		& completo VARCHAR(1) \\ 
-		& conteudo VARCHAR(255) \\ \hline 
+			\multicolumn{2}{|c|}{TAREFA} \\ \hline
+			Codigo & Tipo \\ \hline
+			id & INTEGER \\
+			fim & DATETIME \\ 
+			completo & VARCHAR(19) \\
+			conteudo & VARCHAR(255) \\ \hline
+		\end{tabular}
+
+		\begin{tabular}{|c|l|} \hline
+			\multicolumn{2}{|c|}{MEMORANDO} \\ \hline
+			Codigo & Tipo \\ \hline
+			id & INTEGER \\
+			conteudo & VARCHAR(255) \\ \hline
+		\end{tabular}
+
+		\begin{tabular}{|c|l|} \hline
+			\multicolumn{2}{|c|}{TELEFONE} \\ \hline
+			Codigo & Tipo \\ \hline
+			id & INTEGER \\
+			numero & VARCHAR(25) \\
+			contato\_id & INTEGER \\ \hline
 		\end{tabular}
 		
 		\begin{tabular}{|c|l|} \hline
-		MEMO & fim DATETIME \\ \hline
+			\multicolumn{2}{|c|}{MORADA} \\ \hline
+			Codigo & Tipo \\ \hline
+			id & INTEGER \\
+			rua & VARCHAR(100) \\
+			cidade & VARCHAR(50) \\
+			contato\_id & INTEGER \\ \hline
+		\end{tabular}
+
+		\begin{tabular}{|c|l|} \hline
+			\multicolumn{2}{|c|}{PERIODO} \\ \hline
+			Codigo & Tipo \\ \hline
+			id & INTEGER \\
+			inicio & DATETIME \\
+			fim & DATETIME \\ \hline
 		\end{tabular}
 		
 		\begin{tabular}{|c|l|} \hline
-		\multirow{2}{*}{CATEGORIA}
-		& nome VARCHAR(25) \\
-		& pai REF CATEGORIA \\ \hline 
-		\end{tabular}
-		
-		\begin{tabular}{|c|l|} \hline
-		\multirow{2}{*}{REPETICAO}
-		& frequencia VARCHAR(7) \\
-		& p PERIODO \\ \hline 
-		\end{tabular}
-		
-		\begin{tabular}{|c|l|} \hline
-		\multirow{2}{*}{PERIODO}
-		& inicio DATETIME \\
-		& fim DATETIME \\ \hline 
-		\end{tabular}
-		
-		\begin{tabular}{|c|l|} \hline
-		\multirow{2}{*}{MORADA}
-		& rua VARCHAR(100) \\
-		& cidade VARCHAR(50) \\ \hline 
-		\end{tabular}
-		
-		\begin{tabular}{|c|l|} \hline
-		TELEFONE & numero VARCHAR(25) \\ \hline 
-		\end{tabular}
-		
-		\begin{tabular}{|c|l|} \hline
-		S\_CATEGORIA & SET(REF CATEGORIA) \\ \hline
-		\end{tabular}
-		
-		\begin{tabular}{|c|l|} \hline
-		S\_TOPICO & SET(REF TOPICO) \\ \hline
-		\end{tabular}
-		
-		\begin{tabular}{|c|l|} \hline
-		S\_MORADA & SET(MORADA) \\ \hline
-		\end{tabular}
-		
-		\begin{tabular}{|c|l|} \hline
-		S\_TELEFONE & SET(TELEFONE) \\ \hline
+			\multicolumn{2}{|c|}{REPETICAO} \\ \hline
+			Codigo & Tipo \\ \hline
+			id & INTEGER \\
+			frequencia & VARCHAR(7) \\
+			periodo\_id & INTEGER \\ \hline
 		\end{tabular}
 
 	\end{multicols}
 
+\section{Modelo de dados}
 
+	\begin{multicols}{2}
 
+		\begin{tabular}{|c|l|} \hline
+			\multirow{4}{*}{TOPICO}
+			& titulo VARCHAR(25) \\
+			& alteracao DATETIME \\ 
+			& categorias S\_CATEGORIA \\
+			& referencias S\_TOPICO\\ \hline 
+		\end{tabular}
+		
+		\begin{tabular}{|c|l|} \hline
+			\multirow{4}{*}{CONTATO}
+			& nome VARCHAR(25) \\
+			& telefones S\_TELEFONE \\ 
+			& moradas S\_MORADA \\
+			& email VARCHAR(100) \\ 
+			& url VARCHAR(200) \\ \hline 
+		\end{tabular}
+		
+		\begin{tabular}{|c|l|} \hline
+			\multirow{2}{*}{CALENDARIO}
+			& p PERIODO \\
+			& r REPETICAO \\ \hline 
+		\end{tabular}
+		
+		\begin{tabular}{|c|l|} \hline
+			\multirow{3}{*}{TAREFA}
+			& fim DATETIME \\
+			& completo VARCHAR(1) \\ 
+			& conteudo VARCHAR(255) \\ \hline 
+		\end{tabular}
+		
+		\begin{tabular}{|c|l|} \hline
+			MEMO & fim DATETIME \\ \hline
+		\end{tabular}
+		
+		\begin{tabular}{|c|l|} \hline
+			\multirow{2}{*}{CATEGORIA}
+			& nome VARCHAR(25) \\
+			& pai REF CATEGORIA \\ \hline 
+		\end{tabular}
+		
+		\begin{tabular}{|c|l|} \hline
+			\multirow{2}{*}{REPETICAO}
+			& frequencia VARCHAR(7) \\
+			& p PERIODO \\ \hline 
+		\end{tabular}
+		
+		\begin{tabular}{|c|l|} \hline
+			\multirow{2}{*}{PERIODO}
+			& inicio DATETIME \\
+			& fim DATETIME \\ \hline 
+		\end{tabular}
+		
+		\begin{tabular}{|c|l|} \hline
+			\multirow{2}{*}{MORADA}
+			& rua VARCHAR(100) \\
+			& cidade VARCHAR(50) \\ \hline 
+		\end{tabular}
+		
+		\begin{tabular}{|c|l|} \hline
+			TELEFONE & numero VARCHAR(25) \\ \hline 
+		\end{tabular}
+		
+		\begin{tabular}{|c|l|} \hline
+			S\_CATEGORIA & SET(REF CATEGORIA) \\ \hline
+		\end{tabular}
+		
+		\begin{tabular}{|c|l|} \hline
+			S\_TOPICO & SET(REF TOPICO) \\ \hline
+		\end{tabular}
+		
+		\begin{tabular}{|c|l|} \hline
+			S\_MORADA & SET(MORADA) \\ \hline
+		\end{tabular}
+		
+		\begin{tabular}{|c|l|} \hline
+			S\_TELEFONE & SET(TELEFONE) \\ \hline
+		\end{tabular}
+
+	\end{multicols}
 
 \end{document}
