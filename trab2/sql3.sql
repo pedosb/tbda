@@ -138,7 +138,8 @@ INSERT INTO topicos VALUES (TAREFA(
     'Comprar papel' -- titulo
   , TIMESTAMP '2010-10-15 12:30:00' -- alteracao
   , S_CATEGORIA((SELECT REF(cc) FROM categorias cc WHERE cc.nome = 'Supermercado')) -- categorias
-  , NULL -- referencias
+  , S_TOPICO(  (SELECT REF(t) FROM topicos t WHERE titulo = 'João')
+             , (SELECT REF(t) FROM topicos t WHERE titulo = 'Maria')) -- referencias
   , TIMESTAMP '2010-10-20 12:30:00'
   , 'N'
   , NULL
@@ -209,20 +210,66 @@ INSERT INTO topicos VALUES (CONTATO(
   , 'http://www.exemple.com/' -- url
   ));
   
-INSERT INTO categorias VALUES (
-    'Casa',
-    NULL);
-    
-INSERT INTO categorias VALUES (
-    'Compras',
-    (SELECT REF(cc) FROM categorias cc WHERE cc.nome = 'Casa')
-);
-    
-INSERT INTO categorias VALUES (
-    'Trabalho',
-    NULL);
+select type(t) from topicos t;
+
+---------------------QUESTÃO 1------------------------------------
+select co ntop, nome categoria, ut.type_name aplicacao
+from
+  (select count(value(ca)) co, value(ca).nome nome, sys_typeid(value(t)) sysid
+  from topicos t, table(t.categorias) ca
+  --where value(t) is of (calendario)
+  group by value(ca).nome, sys_typeid(value(t)))
+inner join user_types ut
+on ut.typeid = sysid and ut.supertype_name = 'TOPICO'
+order by categoria;
+-- Porque o sys_typeid não é unico?
+-- Como agrupar por tipo?
+select * from user_types;
+
+---------------------QUESTÃO 2------------------------------------
+select titulo
+from topicos t, table(t.referencias) r 
+where deref(value(r)) is of (contato)
+group by t.titulo
+having count(titulo) > 1;
+--Tem como identifiar uma instancia (um id PK do modelo relacional)
+
+---------------------QUESTÃO 3------------------------------------
+--Colocar granularidade no periodo.
 ----------------------------------------------------------
 
+---------------------QUESTÃO 4------------------------------------
+select t.titulo, sys_typeid(deref(value(r)))
+from topicos t, table(t.referencias) r
+group by t.titulo, sys_typeid(deref(value(r)))
+having count(t.titulo) > 1;
+
+select ca.nome,ca.pai from categorias ca;
+
+with pai as (select ref(ca) from categorias ca where pai = null),
+   filho as (select * from categorias where pai != null)
+select * from pai, filho
+where filho.pai = pai;
+
+select max(l) from (
+select LEVEL l
+from categorias ca
+--start with pai = null 
+connect by prior pai = ref(ca));
+
+select *
+from categorias ca
+start with pai = null 
+connect by prior ca.pai = ref(ca);
+
+select ca.pai.pai.pai.pai.pai from categorias ca;
+
+select value(ca), ca.pai from categorias ca;
+
+select codigo, nome 
+from divisao
+start with pai is null
+connect by prior codigo=pai
 
 CREATE TABLE t (
   t TIMESTAMP);
