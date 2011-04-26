@@ -283,21 +283,36 @@ SELECT * from T;
 CREATE OR REPLACE TYPE atividade IS VARRAY (2) OF INTEGER NOT NULL;
 CREATE OR REPLACE TYPE atividades IS TABLE OF atividade NOT NULL;
 
-
-
-CREATE OR REPLACE PROCEDURE remove_atividade
-(atis IN ATIVIDADES, ati IN ATIVIDADE)
-AS
-(VARIABLE mudou NUMBER)
+CREATE OR REPLACE FUNCTION remove_atividade
+  (in_atis IN ATIVIDADES, ati IN ATIVIDADE)
+RETURN ATIVIDADES
+IS
+atis ATIVIDADES;
 BEGIN
-  FOR i IN atis.FIRST..atis.LAST LOOP
-    IF atis(i) = ati THEN
-      :mudou := 1;
+  atis := ATIVIDADES();
+  FOR i IN in_atis.FIRST..in_atis.LAST LOOP
+    IF in_atis(i)(1) != ati(1) OR in_atis(i)(2) != ati(2) THEN
+      atis.extend;
+      atis(atis.LAST) := in_atis(i);
     END IF;
   END LOOP;
+  RETURN atis;
 END;
 
-print :mudou
+set serveroutput on;
+DECLARE
+novo_atis ATIVIDADES;
+BEGIN
+novo_atis := remove_atividade(atividades(atividade(1,2), atividade(1,3)), atividade(1,2));
+dbms_output.put_line(novo_atis.count);
+if novo_atis.count > 0 then
+  for i in novo_atis.FIRST..novo_atis.LAST loop
+    if novo_atis.exists(i) then
+      dbms_output.put_line(novo_atis(i)(1) || ',' || novo_atis(i)(2));
+    end if;
+  end loop;
+end if;
+END;
 
 CREATE OR REPLACE PROCEDURE pegar_atividades 
 (dia IN INTEGER, p IN PERIODO, aa OUT ATIVIDADES)
