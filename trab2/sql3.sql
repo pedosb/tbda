@@ -278,3 +278,34 @@ DROP TABLE t;
 INSERT INTO t VALUES (TIMESTAMP '2010-10-15 12:30:00');
 
 SELECT * from T;
+
+
+CREATE OR REPLACE TYPE atividade IS VARRAY (2) OF INTEGER NOT NULL;
+CREATE OR REPLACE TYPE atividades IS TABLE OF atividade NOT NULL;
+
+
+
+CREATE OR REPLACE PROCEDURE remove_atividade
+(atis IN ATIVIDADES, ati IN ATIVIDADE)
+AS
+(VARIABLE mudou NUMBER)
+BEGIN
+  FOR i IN atis.FIRST..atis.LAST LOOP
+    IF atis(i) = ati THEN
+      :mudou := 1;
+    END IF;
+  END LOOP;
+END;
+
+print :mudou
+
+CREATE OR REPLACE PROCEDURE pegar_atividades 
+(dia IN INTEGER, p IN PERIODO, aa OUT ATIVIDADES)
+AS
+BEGIN
+  aa := atividades(atividade(1,2));
+  --insert into aa values (atividade(1,2));
+  --aa := atividade(1,2);
+  insert into categorias values ('asdf', null);
+END pegar_atividades;
+
