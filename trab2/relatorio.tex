@@ -9,6 +9,7 @@
 \usepackage{graphicx}
 \usepackage{longtable}
 \usepackage{verbatim}
+\usepackage{minted}
 
 \usepackage{float}
 \floatstyle{ruled}
@@ -250,6 +251,53 @@
 
 	\end{multicols}
 
-		
+\section{Interrogações}
+
+	Apesar das respostas às perguntas estarem presentes nesta secção, o código relativo à criação de tipos, criação de tabelas, e preenchimento de dados irá estar presente no anexo do relatório.
+	A única resposta que não estará completamente respondida nesta secção e Questão 4, uma vez que a resposta a esta pergunta envolve a descrição de uma serie de procedimentos e funções em PL/SQL. No entanto, este código tambem esta presente em anexo.
+
+\subsection{Questão 1}
+
+	\emph{Quantos tópicos há, em cada aplicação, para cada categoria?}\\
+
+	\begin{program}
+		%\verbatiminput{file.txt}
+		\caption{Legenda}
+		\label{sql:1}
+	\end{program}
+
+\subsection{Questão 2}
+
+	\emph{Quais os tópicos que têm referências a pelo menos três pessoas?}\\
+
+\subsection{Questão 3}
+
+	\emph{Qual o dia mais preenchido do mês, sendo que as sobreposições só contam uma vez?	}\\
+
+	A resposta a esta questão envolve uma série de procedimentos e funções em PL/SQL que estão descritos no Anexo.
+
+	Aqui iremos apenas fazer uma descrição das funcionalidades que foram implementadas e as principais restrições da solução.
+
+	\begin{itemize}
+		\item	A solução implementada não tem restrições de granularidade, isto é, funciona com qualquer que seja a data do calendário introduzido. 
+	\end{itemize}
+
+\subsection{Questão 4}
+
+	\emph{Quais os tópicos complexos que têm referências para tópicos de todas as aplicações?}\\
+
+\subsection{Questão C}
+
+	\emph{Como procederia para saber qual a profundidade da hierarquia de categorias?}\\
+
+	\inputminted{sql}{sql3.sql}
+
+\section{Anexo - Código}
+
+	%\begin{minted}{sql}
+	%	SELECT * FROM buh;
+	%\end{minted}
+
+	\inputminted{sql}{sql3.sql}
 
 \end{document}

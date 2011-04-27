@@ -3,7 +3,7 @@
 # Data: 10/04/2011
 #####
 
-LATEX = latex
+LATEX = latex -shell-escape
 BIBTEX = bibtex
 DVIPDF = dvipdf
 RM = rm -f
@@ -26,7 +26,7 @@ $(DVI) : $(SOURCE)
 	$(LATEX) $(MAIN)
 
 clean :
-	$(RM) *.aux *.bbl *.blg *.dvi *.log *~
+	$(RM) *.aux *.bbl *.blg *.dvi *.log *~ *.pyg
 
 distclean :
 	$(RM) $(TARGET)
