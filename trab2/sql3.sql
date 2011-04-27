@@ -280,8 +280,63 @@ INSERT INTO t VALUES (TIMESTAMP '2010-10-15 12:30:00');
 SELECT * from T;
 
 
-CREATE OR REPLACE TYPE atividade IS VARRAY (2) OF INTEGER NOT NULL;
-CREATE OR REPLACE TYPE atividades IS TABLE OF atividade NOT NULL;
+CREATE OR REPLACE TYPE ATIVIDADE IS VARRAY (2) OF INTEGER NOT NULL;
+CREATE OR REPLACE TYPE ATIVIDADES IS TABLE OF ATIVIDADE NOT NULL;
+
+DROP TYPE ATIVIDADES FORCE;
+DROP TYPE ATIVIDADE FORCE;
+
+
+CREATE OR REPLACE PROCEDURE imprime_atividade
+  (ati ATIVIDADE)
+IS
+BEGIN
+  dbms_output.put_line('[' || ati(1) || ',' || ati(2) || ']');
+END;
+
+
+CREATE OR REPLACE PROCEDURE imprime_atividades
+  (atis ATIVIDADES)
+IS
+BEGIN
+  FOR i IN atis.FIRST .. atis.LAST LOOP
+    imprime_atividade(atis(i));
+  END LOOP;
+END;
+
+-- Teste impressao
+set serveroutput on;
+DECLARE
+  ati ATIVIDADE;
+  atis ATIVIDADES;
+BEGIN
+  ati := ATIVIDADE(1,2);
+  atis := ATIVIDADES(ati, ATIVIDADE(3,4));
+  imprime_atividades(atis);
+END;
+
+-- Exemplo de extracao de timestamps
+set serveroutput on;
+DECLARE
+  t TIMESTAMP;
+  y INTEGER;
+  m INTEGER;
+  d INTEGER;
+  h INTEGER;
+  mi INTEGER;
+  s INTEGER;
+BEGIN
+  t := TIMESTAMP '2010-10-15 12:30:00';
+  y := EXTRACT(year FROM t);
+  m := EXTRACT(month FROM t);
+  d := EXTRACT(day FROM t);
+  h := EXTRACT(hour FROM t);
+  mi := EXTRACT(minute FROM t);
+  s := EXTRACT(second FROM t);
+  dbms_output.put_line(y || '/' || m || '/' || d || ' ' || h || ':' || mi || ':' || s);
+END;
+
+
 
 CREATE OR REPLACE FUNCTION remove_atividade
   (in_atis IN ATIVIDADES, ati IN ATIVIDADE)
