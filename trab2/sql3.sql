@@ -297,13 +297,14 @@ CREATE OR REPLACE PROCEDURE imprime_atividades
   (atis ATIVIDADES)
 IS
 BEGIN
+  --dbms_output.put_line('Atividades:');
   FOR i IN atis.FIRST .. atis.LAST LOOP
     imprime_atividade(atis(i));
   END LOOP;
 END;
 
 -- Teste impressao
-set serveroutput on;
+SET serveroutput ON;
 DECLARE
   ati ATIVIDADE;
   atis ATIVIDADES;
@@ -314,7 +315,7 @@ BEGIN
 END;
 
 -- Exemplo de extracao de timestamps
-set serveroutput on;
+SET serveroutput ON;
 DECLARE
   t TIMESTAMP;
   y INTEGER;
@@ -354,6 +355,20 @@ BEGIN
   END IF;
 END;
 
+-- Teste atividades iguais
+SET serveroutput ON;
+DECLARE
+  ati1 ATIVIDADE;
+  ati2 ATIVIDADE;
+  ati3 ATIVIDADE;
+BEGIN
+  ati1 := ATIVIDADE(1,2);
+  ati2 := ATIVIDADE(1,2);
+  ati3 := ATIVIDADE(3,4);
+  dbms_output.put_line('Iguais:' || atividades_iguais(ati1, ati2));
+  dbms_output.put_line('Diferentes:' || atividades_iguais(ati1, ati3));
+END;
+
 CREATE OR REPLACE FUNCTION atividades_unicas
   (atis IN ATIVIDADES)
 RETURN ATIVIDADES
@@ -364,11 +379,13 @@ BEGIN
   unis := ATIVIDADES();
   FOR i IN atis.FIRST .. atis.LAST LOOP
     f := 1;
-    FOR j IN unis.FIRST .. unis.LAST LOOP
-      IF atividades_iguais(atis(i), unis(j)) = 1 THEN
-        f := 0;
-      END IF;
-    END LOOP;
+    IF unis.count != 0 THEN
+      FOR j IN unis.FIRST .. unis.LAST LOOP
+        IF atividades_iguais(atis(i), unis(j)) = 1 THEN
+          f := 0;
+        END IF;
+      END LOOP;
+    END IF;
     IF f = 1 THEN
       unis.extend;
       unis(unis.LAST) := atis(i);
@@ -378,11 +395,49 @@ BEGIN
 END;
 
 -- Teste atividades unicas
+SET serveroutput ON;
 DECLARE
-
+  atis ATIVIDADES;
+  unis ATIVIDADES;
 BEGIN
-
+  atis := ATIVIDADES(ATIVIDADE(1,2), ATIVIDADE(2,3), ATIVIDADE(1,2));
+  dbms_output.put_line('Original');
+  imprime_atividades(atis);
+  unis := atividades_unicas(atis);
+  dbms_output.put_line('Unicas');
+  imprime_atividades(unis);
 END;
+
+CREATE OR REPLACE FUNCTION parte_atividade
+  (ati IN ATIVIDADE, p IN INTEGER)
+RETURN ATIVIDADES
+IS
+  ati1 ATIVIDADE;
+  ati2 ATIVIDADE;
+BEGIN
+  IF p < ati(1) OR ati(2) < p THEN
+    RETURN ATIVIDADES(ati);
+  ELSE
+    ati1 := ATIVIDADE(ati(1), p);
+    ati2 := ATIVIDADE(p, ati(2));
+    RETURN ATIVIDADES(ati1, ati2);
+  END IF;
+END;
+
+-- Teste parte atividades
+SET serveroutput ON;
+DECLARE
+  ati ATIVIDADE;
+  atis ATIVIDADES;
+BEGIN
+  ati := ATIVIDADE(1, 10);
+  dbms_output.put_line('Atividade');
+  imprime_atividade(ati);
+  atis := parte_atividade(ati, 4);
+  dbms_output.put_line('Atividades');
+  imprime_atividades(atis);
+END;
+
 
 CREATE OR REPLACE FUNCTION remove_atividade
   (in_atis IN ATIVIDADES, ati IN ATIVIDADE)
