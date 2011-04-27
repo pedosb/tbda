@@ -510,26 +510,75 @@ END;
 
 create or replace function calcular_tempo
   -- Funciona para periodos dentro do mesmo mês
-  (dia intenger, ps s_periodo)
+  (dia integer, ps s_periodo)
   return integer
 is
-atis ATIVIDADES;
+atis atividades;
+natis atividades;
+att atividade;
+tempo numeric;
+i integer;
 begin
   atis := ATIVIDADES();
-  for i in ps.first..ps.last loop
-    atis := conc_atividades(atis, pegar_atividade(dia, ps(i)));
+  for j in ps.first..ps.last loop
+    atis := conc_atividades(atis, pegar_atividade(dia, ps(j)));
+  end loop;
+  i := 1;
+  loop
+    exit when i > atis.last;
+--    dbms_output.put_line('i '||i||' count '||atis(i)(1));
+    att := atis(i);
+    natis := atis;
+--    dbms_output.put_line('debug');
+--    imprime_atividades(natis);
+    for j in atis.first..atis.last loop    
+      if atis(j)(1) < att(1) and atis(j)(2) > att(1) then
+        natis := remove_atividade(natis, atis(j));
+        natis := conc_atividades(natis, parte_atividade(atis(j), att(1)));
+      end if;
+      if atis(j)(1) < att(2) and atis(j)(2) > att(2) then
+        natis := remove_atividade(natis, atis(j));
+        natis := conc_atividades(natis, parte_atividade(atis(j), att(2)));
+      end if;
+    end loop;
+    atis := natis;
+    i := i+1;
   end loop;
   
-  
-  atis := atividades_unicas(atis);
+  i := 1;
+  loop
+    exit when i > atis.last;
+    att := atis(i);
+    natis := atis;
+    for j in atis.first..atis.last loop
+      if atis(j)(1) > att(1) and atis(j)(2) < att(2) then
+        natis := remove_atividade(natis, atis(j));
+      end if;
+    end loop;
+    atis := atividades_unicas(natis);
+    i := i+1;
+  end loop;
+  --atis := atividades_unicas(atis);
+  imprime_atividades(atis);
+  tempo := 0;
+  for j in atis.first..atis.last loop
+    tempo := tempo + atis(j)(2) - atis(j)(1);
+  end loop;
+  return tempo;
 end;
 
 SET SERVEROUTPUT ON;
 DECLARE
   atis ATIVIDADES;
 begin
+  dbms_output.put_line(calcular_tempo(1, s_periodo(periodo(timestamp '2010-10-01 00:00:02',
+                                                           timestamp '2010-10-01 00:00:06'),
+                                                  periodo(timestamp '2010-10-01 00:00:07',
+                                                           timestamp '2010-10-01 00:00:09'),
+                                                  periodo(timestamp '2010-10-01 00:00:01',
+                                                           timestamp '2010-10-01 00:00:04'))));
   --dbms_output.put_line(cast(to_date('2010-10-2 00:00:00', 'YYYY-MM-DD HH24:MI:SS') as timestamp));
-  imprime_atividades(pegar_atividade(1, periodo(timestamp '2010-10-01 00:00:01', timestamp '2010-10-02 00:00:01')));
+  --imprime_atividades(pegar_atividade(1, periodo(timestamp '2010-10-01 00:00:01', timestamp '2010-10-02 00:00:01')));
   --atis := atividades(atividade(1,2));
   --imprime_atividades(atis);
   --atis := conc_atividades(atis, ATIVIDADES(ATIVIDADE(3,4)));
