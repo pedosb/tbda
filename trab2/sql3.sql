@@ -334,7 +334,7 @@ BEGIN
   dbms_output.put_line(y || '/' || m || '/' || d || ' ' || h || ':' || mi || ':' || s);
 END;
 
-CREATE OR REPLACE FUNCTION timestamp2integer
+CREATE OR REPLACE FUNCTION timestamp_para_inteiro
   (t TIMESTAMP)
 RETURN INTEGER
 IS
@@ -342,6 +342,47 @@ BEGIN
   return EXTRACT(hour FROM t) * EXTRACT(minute FROM t) * EXTRACT(second FROM t);
 END;
 
+CREATE OR REPLACE FUNCTION atividades_iguais
+  (ati1 IN ATIVIDADE, ati2 ATIVIDADE)
+RETURN INTEGER
+IS
+BEGIN
+  IF ati1(1) = ati2(1) AND ati1(2) = ati2(2) THEN
+    RETURN 1;
+  ELSE
+    RETURN 0;
+  END IF;
+END;
+
+CREATE OR REPLACE FUNCTION atividades_unicas
+  (atis IN ATIVIDADES)
+RETURN ATIVIDADES
+IS
+  unis ATIVIDADES;
+  f INTEGER;
+BEGIN
+  unis := ATIVIDADES();
+  FOR i IN atis.FIRST .. atis.LAST LOOP
+    f := 1;
+    FOR j IN unis.FIRST .. unis.LAST LOOP
+      IF atividades_iguais(atis(i), unis(j)) = 1 THEN
+        f := 0;
+      END IF;
+    END LOOP;
+    IF f = 1 THEN
+      unis.extend;
+      unis(unis.LAST) := atis(i);
+    END IF;
+  END LOOP;
+  RETURN unis;
+END;
+
+-- Teste atividades unicas
+DECLARE
+
+BEGIN
+
+END;
 
 CREATE OR REPLACE FUNCTION remove_atividade
   (in_atis IN ATIVIDADES, ati IN ATIVIDADE)
