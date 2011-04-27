@@ -569,14 +569,17 @@ end;
 
 SET SERVEROUTPUT ON;
 DECLARE
-  atis ATIVIDADES;
+  atis atividades;
+  ps s_periodo;
 begin
+  --select t.periodo into ps from topicos t where value(t) is of calendario;
   dbms_output.put_line(calcular_tempo(1, s_periodo(periodo(timestamp '2010-10-01 00:00:02',
                                                            timestamp '2010-10-01 00:00:06'),
                                                   periodo(timestamp '2010-10-01 00:00:07',
                                                            timestamp '2010-10-01 00:00:09'),
                                                   periodo(timestamp '2010-10-01 00:00:01',
                                                            timestamp '2010-10-01 00:00:04'))));
+                                                           */
   --dbms_output.put_line(cast(to_date('2010-10-2 00:00:00', 'YYYY-MM-DD HH24:MI:SS') as timestamp));
   --imprime_atividades(pegar_atividade(1, periodo(timestamp '2010-10-01 00:00:01', timestamp '2010-10-02 00:00:01')));
   --atis := atividades(atividade(1,2));
@@ -584,3 +587,19 @@ begin
   --atis := conc_atividades(atis, ATIVIDADES(ATIVIDADE(3,4)));
   --imprime_atividades(atis);
 END;
+
+SET SERVEROUTPUT ON;
+declare
+top topico;
+cal calendario;
+cursor cur is
+select value(t) from topicos t where value(t) is of (calendario);
+begin
+open cur;
+loop
+  fetch cur into top;
+  exit when cur%notfound;
+  cal := treat(top as calendario);
+  dbms_output.put_line(cal.p.inicio);
+end loop;
+end;
