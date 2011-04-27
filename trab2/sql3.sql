@@ -25,7 +25,8 @@ CREATE OR REPLACE TYPE S_CATEGORIA AS TABLE OF REF CATEGORIA;
 -----------------PERIODO----------------------------------
 CREATE OR REPLACE TYPE PERIODO AS OBJECT(
     inicio  TIMESTAMP
-  , fim     TIMESTAMP);
+  , fim     timestamp);
+CREATE OR REPLACE TYPE S_PERIODO AS TABLE OF PERIODO NOT NULL;
 ----------------------------------------------------------
 
 -----------------REPETICAO--------------------------------
@@ -339,7 +340,7 @@ CREATE OR REPLACE FUNCTION timestamp_para_inteiro
 RETURN INTEGER
 IS
 BEGIN
-  return EXTRACT(hour FROM t) * EXTRACT(minute FROM t) * EXTRACT(second FROM t);
+  return EXTRACT(hour FROM t) * 3600 + EXTRACT(minute FROM t) * 60 + EXTRACT(second FROM t);
 END;
 
 CREATE OR REPLACE FUNCTION atividades_iguais
@@ -415,14 +416,67 @@ if novo_atis.count > 0 then
 end if;
 END;
 
-CREATE OR REPLACE FUNCTION pegar_atividades 
-  (dia IN INTEGER, p IN PERIODO)
+create or replace function pegar_atividade
+  --Assume que o mês e ano do periodo são iguais
+  (dia in integer, p in periodo)
   RETURN ATIVIDADES
 IS
-  atis ATIVIDADES;
-  --TODO: Não trata periodos que estejam fora do dia
-  IF dia = EXTRACT(DAY FROM p.inicio) and dia = EXTRACT(DAY FROM p.fim) THEN
-    a
+  atis atividades;
+  dia_inicio integer;
+  nova_data VARCHAR(19);
+begin
+  dia_inicio := extract(day from p.inicio);
+  if dia = dia_inicio and dia = extract(day from p.fim) then
+    return atividades(atividade(timestamp_para_inteiro(p.inicio), timestamp_para_inteiro(p.fim)));
+  else
+    if dia = dia_inicio then
+      nova_data := '2010-' || extract(month from p.inicio) || '-' || (dia+1) || ' 00:00:00';
+      return conc_atividades(atividades(atividade(timestamp_para_inteiro(p.inicio), 86400)),
+                             pegar_atividade(dia+1, periodo(cast(TO_DATE(nova_data,'YYYY-MM-DD HH24:MI:SS') as timestamp) , p.fim)));
+    end if;
   END IF;
-BEGIN
-END pegar_atividades;
+END;
+
+create or replace function conc_atividades
+  (atis1 atividades, atis2 atividades)
+  return atividades
+is
+  new_atis atividades;
+begin
+  new_atis := atis1;
+  for i in atis2.first..atis2.last loop
+    if atis2.exists(i) then
+      new_atis.extend;
+      new_atis(new_atis.LAST) := atis2(i);
+    END IF;
+  end loop;
+  RETURN new_atis;
+END;
+
+create or replace function calcular_tempo
+  -- Funciona para periodos dentro do mesmo mês
+  (dia intenger, ps s_periodo)
+  return integer
+is
+atis ATIVIDADES;
+begin
+  atis := ATIVIDADES();
+  for i in ps.first..ps.last loop
+    atis := conc_atividades(atis, pegar_atividade(dia, ps(i)));
+  end loop;
+  
+  
+  atis := atividades_unicas(atis);
+end;
+
+SET SERVEROUTPUT ON;
+DECLARE
+  atis ATIVIDADES;
+begin
+  --dbms_output.put_line(cast(to_date('2010-10-2 00:00:00', 'YYYY-MM-DD HH24:MI:SS') as timestamp));
+  imprime_atividades(pegar_atividade(1, periodo(timestamp '2010-10-01 00:00:01', timestamp '2010-10-02 00:00:01')));
+  --atis := atividades(atividade(1,2));
+  --imprime_atividades(atis);
+  --atis := conc_atividades(atis, ATIVIDADES(ATIVIDADE(3,4)));
+  --imprime_atividades(atis);
+END;
