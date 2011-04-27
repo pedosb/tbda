@@ -286,14 +286,12 @@ CREATE OR REPLACE TYPE ATIVIDADES IS TABLE OF ATIVIDADE NOT NULL;
 DROP TYPE ATIVIDADES FORCE;
 DROP TYPE ATIVIDADE FORCE;
 
-
 CREATE OR REPLACE PROCEDURE imprime_atividade
   (ati ATIVIDADE)
 IS
 BEGIN
   dbms_output.put_line('[' || ati(1) || ',' || ati(2) || ']');
 END;
-
 
 CREATE OR REPLACE PROCEDURE imprime_atividades
   (atis ATIVIDADES)
@@ -336,6 +334,13 @@ BEGIN
   dbms_output.put_line(y || '/' || m || '/' || d || ' ' || h || ':' || mi || ':' || s);
 END;
 
+CREATE OR REPLACE FUNCTION timestamp2integer
+  (t TIMESTAMP)
+RETURN INTEGER
+IS
+BEGIN
+  return EXTRACT(hour FROM t) * EXTRACT(minute FROM t) * EXTRACT(second FROM t);
+END;
 
 
 CREATE OR REPLACE FUNCTION remove_atividade
@@ -345,7 +350,7 @@ IS
 atis ATIVIDADES;
 BEGIN
   atis := ATIVIDADES();
-  FOR i IN in_atis.FIRST..in_atis.LAST LOOP
+  FOR i IN in_atis.FIRST .. in_atis.LAST LOOP
     IF in_atis(i)(1) != ati(1) OR in_atis(i)(2) != ati(2) THEN
       atis.extend;
       atis(atis.LAST) := in_atis(i);
