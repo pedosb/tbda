@@ -349,7 +349,7 @@ CREATE OR REPLACE FUNCTION timestamp_para_inteiro
 RETURN INTEGER
 IS
 BEGIN
-  return EXTRACT(hour FROM t) * EXTRACT(minute FROM t) * EXTRACT(second FROM t);
+  return EXTRACT(hour FROM t) * 3600 + EXTRACT(minute FROM t) * 60 + EXTRACT(second FROM t);
 END;
 
 CREATE OR REPLACE FUNCTION atividades_iguais
@@ -479,13 +479,251 @@ if novo_atis.count > 0 then
 end if;
 END;
 
-CREATE OR REPLACE PROCEDURE pegar_atividades 
-(dia IN INTEGER, p IN PERIODO, aa OUT ATIVIDADES)
-AS
-BEGIN
-  aa := atividades(atividade(1,2));
-  --insert into aa values (atividade(1,2));
-  --aa := atividade(1,2);
-  insert into categorias values ('asdf', null);
-END pegar_atividades;
+create or replace function pegar_atividade
+  --Assume que o mês e ano do periodo são iguais
+  (dia in integer, p in periodo)
+  RETURN ATIVIDADES
+IS
+  atis atividades;
+  dia_inicio integer;
+  nova_data VARCHAR(19);
+begin
+  dia_inicio := extract(day from p.inicio);
+  if dia = dia_inicio and dia = extract(day from p.fim) then
+    return atividades(atividade(timestamp_para_inteiro(p.inicio), timestamp_para_inteiro(p.fim)));
+  else
+    if dia = dia_inicio then
+      nova_data := '2010-' || extract(month from p.inicio) || '-' || (dia+1) || ' 00:00:00';
+      --TODO: não regorna nada (não adianta recursividade já que o dia é passado
+      return conc_atividades(atividades(atividade(timestamp_para_inteiro(p.inicio), 86400)),
+                             pegar_atividade(dia, periodo(cast(TO_DATE(nova_data,'YYYY-MM-DD HH24:MI:SS') as timestamp) , p.fim)));
+    end if;
+  end if;
+  return atividades();
+END;
 
+create or replace function conc_atividades
+  (atis1 atividades, atis2 atividades)
+  return atividades
+is
+  new_atis atividades;
+begin
+  new_atis := atis1;
+  if atis2.count > 0 then
+    for i in atis2.first..atis2.last loop
+      if atis2.exists(i) then
+        new_atis.extend;
+        new_atis(new_atis.LAST) := atis2(i);
+      END IF;
+    end loop;
+  end if;
+  RETURN new_atis;
+END;
+
+create or replace function calcular_tempo
+  -- Funciona para periodos dentro do mesmo mês
+  (dia integer, ps s_periodo)
+  return integer
+is
+atis atividades;
+natis atividades;
+att atividade;
+tempo numeric;
+i integer;
+begin
+  atis := ATIVIDADES();
+  for j in ps.first..ps.last loop
+    atis := conc_atividades(atis, pegar_atividade(dia, ps(j)));
+  end loop;
+  if atis.count < 1 then
+    return 0;
+  end if;
+  i := 1;
+  loop
+    exit when i > atis.last;
+    --dbms_output.put_line('i '||i||' count '||atis(i)(1));
+    att := atis(i);
+    natis := atis;
+--    dbms_output.put_line('debug');
+--    imprime_atividades(natis);
+    for j in atis.first..atis.last loop    
+      if atis(j)(1) < att(1) and atis(j)(2) > att(1) then
+        natis := remove_atividade(natis, atis(j));
+        natis := conc_atividades(natis, parte_atividade(atis(j), att(1)));
+      end if;
+      if atis(j)(1) < att(2) and atis(j)(2) > att(2) then
+        natis := remove_atividade(natis, atis(j));
+        natis := conc_atividades(natis, parte_atividade(atis(j), att(2)));
+      end if;
+    end loop;
+    atis := natis;
+    i := i+1;
+  end loop;
+  
+  i := 1;
+  loop
+    exit when i > atis.last;
+    att := atis(i);
+    natis := atis;
+    for j in atis.first..atis.last loop
+      if atis(j)(1) > att(1) and atis(j)(2) < att(2) then
+        natis := remove_atividade(natis, atis(j));
+      end if;
+    end loop;
+    atis := atividades_unicas(natis);
+    i := i+1;
+  end loop;
+  --atis := atividades_unicas(atis);
+  --imprime_atividades(atis);
+  tempo := 0;
+  for j in atis.first..atis.last loop
+    tempo := tempo + atis(j)(2) - atis(j)(1);
+  end loop;
+  return tempo;
+end;
+
+SET SERVEROUTPUT ON;
+DECLARE
+  atis atividades;
+  ps s_periodo;
+begin
+  --select t.periodo into ps from topicos t where value(t) is of calendario;
+  dbms_output.put_line(calcular_tempo(1, s_periodo(periodo(timestamp '2010-10-01 00:00:02',
+                                                           timestamp '2010-10-01 00:00:06'),
+                                                  periodo(timestamp '2010-10-01 00:00:07',
+                                                           timestamp '2010-10-01 00:00:09'),
+                                                  periodo(timestamp '2010-10-01 00:00:01',
+                                                           timestamp '2010-10-01 00:00:04'))));
+  --dbms_output.put_line(cast(to_date('2010-10-2 00:00:00', 'YYYY-MM-DD HH24:MI:SS') as timestamp));
+  --imprime_atividades(pegar_atividade(1, periodo(timestamp '2010-10-01 00:00:01', timestamp '2010-10-02 00:00:01')));
+  --atis := atividades(atividade(1,2));
+  --imprime_atividades(atis);
+  --atis := conc_atividades(atis, ATIVIDADES(ATIVIDADE(3,4)));
+  --imprime_atividades(atis);
+END;
+
+set serveroutput on;
+create or replace function pegar_dia_mais_ocupado
+  (mes in integer, ano in integer)
+  return integer
+is
+  ps s_periodo;
+  top topico;
+  dia integer;
+  tempo_max integer;
+  data_atual date;
+  type slot_mes is varray (31) of integer;
+  sm slot_mes;
+  cursor cur is
+    select value(t) from topicos t where value(t) is of (calendario);
+begin
+  sm := slot_mes();
+  ps := s_periodo();
+  open cur;
+  loop
+    fetch cur into top;
+    exit when cur%notfound;
+    ps.extend;
+    ps(ps.last) := treat(top as calendario).p;
+  end loop;
+  data_atual := to_date(ano || '-' || mes || '-1','YYYY-MM-DD');
+  loop
+    exit when mes != extract(month from data_atual);
+    dia := extract(day from data_atual);
+    sm.extend;
+    sm(sm.last) := calcular_tempo(dia, ps);
+    data_atual := data_atual + interval '1' day;
+  end loop;
+  tempo_max := 0;
+  for i in sm.first..sm.last loop
+    if sm(i) > tempo_max then
+      dia := i;
+      tempo_max := sm(i);
+    end if;
+  end loop;
+  return dia;
+end;
+
+SET SERVEROUTPUT ON;
+declare
+d timestamp;
+atis atividades;
+type slot_mes is varray (31) of integer;
+sm slot_mes;
+begin
+  dbms_output.put_line(pegar_dia_mais_ocupado(1, 2010));
+  --d := timestamp '2010-10-2 23:00:00';
+  --dbms_output.put_line(d + interval '1' day);
+end;
+
+create or replace function conc_periodos
+  (p1 s_periodo, p2 s_periodo)
+  return s_periodo
+is
+  new_ps s_periodo;
+begin
+  new_ps := p1;
+  if p2.count > 0 then
+    for i in p2.first..p2.last loop
+      if p2.exists(i) then
+        new_ps.extend;
+        new_ps(new_ps.LAST) := p2(i);
+      END IF;
+    end loop;
+  end if;
+  return new_ps;
+END;
+
+create or replace function normalizar_periodo
+  (p periodo)
+  return s_periodo
+is
+ano_inicial integer;
+ultimo_dia timestamp;
+mes_inicial integer;
+ultimo_dia_mes timestamp;
+dia_inicial integer;
+ultima_hora timestamp;
+begin
+  ano_inicial := extract(year from p.inicio);
+  if ano_inicial != extract(year from p.fim) then
+    dbms_output.put_line(ano_inicial);
+    ultimo_dia := cast(to_date(ano_inicial || '-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS') as timestamp);
+    dbms_output.put_line(ano_inicial);
+    return conc_periodos(normalizar_periodo(periodo(p.inicio,
+                                           ultimo_dia)),
+                         normalizar_periodo(periodo(ultimo_dia + interval '1' second,
+                                                    p.fim)));
+  end if;
+  mes_inicial := extract(month from p.inicio);
+  if mes_inicial != extract(month from p.fim) then
+    ultimo_dia_mes := cast( last_day(to_date(ano_inicial || '-' || mes_inicial || '-3 23:59:59', 'YYYY-MM-DD HH24:MI:SS')) as timestamp);
+    return conc_periodos(normalizar_periodo(periodo(p.inicio, ultimo_dia_mes)),
+                         normalizar_periodo(periodo(ultimo_dia_mes + interval '1' second,
+                                                    p.fim)));
+  end if;
+  dia_inicial := extract(day from p.inicio);
+  if dia_inicial != extract(day from p.fim) then
+    ultima_hora := cast(to_date(ano_inicial || '-' || mes_inicial || '-' || dia_inicial || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS') as timestamp);
+    return conc_periodos(s_periodo(periodo(p.inicio, ultima_hora)),
+                         normalizar_periodo(periodo(ultima_hora + interval '1' second,
+                                                    p.fim)));
+  end if;
+  return s_periodo(p);
+end;
+
+create or replace procedure imprime_periodo
+  (p in s_periodo)
+is
+begin
+  for i in p.first..p.last loop
+    dbms_output.put_line(p(i).inicio || ', ' || p(i).fim);
+  end loop;
+end;
+
+set serveroutput on;
+begin
+  --dbms_output.put_line(cast ('2010-12-12 23:59:59' as timestamp));
+  imprime_periodo(normalizar_periodo(periodo(timestamp '2010-10-01 00:00:02',
+                                             timestamp '2010-11-01 00:00:06')));
+end;
