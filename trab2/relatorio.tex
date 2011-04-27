@@ -25,15 +25,33 @@
 
 \section{Modelo de classes}
 
+	A figura \ref{fig:classes} apresenta o modelo de classes que serviu para modelar o problema proposto. Este modelo comporta algumas alterações pequenas ao problema original, nomeadamente:
+
+	\begin{itemize}
+		\item O relaxamento da restrição do número de moradas permitidas. 	
+		\item Adição de um campo de título no tópico para servir de identificação do tópico ao utilizador (alias).  
+	\end{itemize}
+
+	Relativamente às decisões efectuadas para a construção do modelo de classes da  figura \ref{fig:classes} temos:
+
+	\begin{itemize}
+		\item A encapsulação do conceito de período de tempo numa classe pois o conceito aparece repetido no calendário e no período de repetição das mensagens do mesmo.
+		\item A hierarquia das categorias foi modelada através de uma relação entre categorias com o nome de ``pai''. 
+	\end{itemize}
+
 	\begin{figure}[htp]
 		\begin{center}
 			\includegraphics[height=300pt]{uml}
 		\end{center}
 		\caption{Modelo de classes.}
-		\label{fig:uml}
+		\label{fig:classes}
 	\end{figure}
 
 \section{Modelo relacional}
+
+	A seguir apresenta-se as tabelas que iriam ser criadas caso fossemos utilizar um modelo relacional usual.
+
+	Nesse caso seria preciso criar uma tabela para cada tipo de dados. Com colunas com chaves primárias de outras tabelas no caso de haver uma relação de um-para-um como no caso da relação entre calendário e repetição. Ou no caso da relação muitos-para-um como na relação de telefone e contato. E seria ainda preciso criar tabelas extra para as relações muitos-para-muitos das relações entre tópicos e entre tópicos e categorias.
 
 	\begin{multicols}{2}
 
@@ -63,6 +81,13 @@
 		\end{tabular}
 			
 		\begin{tabular}{|c|l|} \hline
+			\multicolumn{2}{|c|}{TOPICO\_CATEGORIA} \\ \hline
+			Codigo & Tipo \\ \hline
+			topico\_id  & INTEGER \\
+			categoria\_id & INTEGER \\ \hline
+		\end{tabular}
+				
+		\begin{tabular}{|c|l|} \hline
 			\multicolumn{2}{|c|}{CONTATO} \\ \hline
 			Codigo & Tipo \\ \hline
 			id & INTEGER \\
@@ -70,7 +95,7 @@
 			email & VARCHAR(100) \\
 			url & VARCHAR(200) \\ \hline
 		\end{tabular}
-
+		
 		\begin{tabular}{|c|l|} \hline
 			\multicolumn{2}{|c|}{CALENDARIO} \\ \hline
 			Codigo & Tipo \\ \hline
@@ -130,7 +155,18 @@
 
 	\end{multicols}
 
-\section{Modelo de dados}
+\section{Modelo objecto-relacional}
+
+	Os tipos de dados adicionados à base de dados foram praticamente transpostos do modelo de classes e estão apresentados a seguir. 
+	
+	Apenas temos de realçar:
+
+	\begin{itemize}
+		\item O campo pai das categorias é uma referência para uma Categoria.
+		\item Os tópicos tem um conjunto de referências Categoria e um conjunto de referências Topico.
+		\item Os contatos contêm conjuntos de Morada e Telefone.
+		\item	E as repetições e calendários integram tipos de Periodo. 
+	\end{itemize}
 
 	\begin{multicols}{2}
 
@@ -213,5 +249,7 @@
 		\end{tabular}
 
 	\end{multicols}
+
+		
 
 \end{document}
