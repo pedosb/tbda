@@ -374,13 +374,14 @@ if novo_atis.count > 0 then
 end if;
 END;
 
-CREATE OR REPLACE PROCEDURE pegar_atividades 
-(dia IN INTEGER, p IN PERIODO, aa OUT ATIVIDADES)
-AS
+CREATE OR REPLACE FUNCTION pegar_atividades 
+  (dia IN INTEGER, p IN PERIODO)
+  RETURN ATIVIDADES
+IS
+  atis ATIVIDADES;
+  --TODO: Não trata periodos que estejam fora do dia
+  IF dia = EXTRACT(DAY FROM p.inicio) and dia = EXTRACT(DAY FROM p.fim) THEN
+    a
+  END IF;
 BEGIN
-  aa := atividades(atividade(1,2));
-  --insert into aa values (atividade(1,2));
-  --aa := atividade(1,2);
-  insert into categorias values ('asdf', null);
 END pegar_atividades;
-
