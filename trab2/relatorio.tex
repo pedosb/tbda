@@ -164,9 +164,9 @@
 
 	\begin{itemize}
 		\item O campo pai das categorias é uma referência para uma Categoria.
-		\item Os tópicos tem um conjunto de referências Categoria e um conjunto de referências Topico.
+		\item Os tópicos tem um conjunto de referências Categoria e um conjunto de referências Tópico.
 		\item Os contatos contêm conjuntos de Morada e Telefone.
-		\item E as repetições e calendários integram tipos de Periodo. 
+		\item E as repetições e calendários integram tipos de Período. 
 	\end{itemize}
 
 	\begin{multicols}{2}
@@ -255,7 +255,7 @@
 
 	Apesar das respostas às perguntas estarem presentes nesta secção, o código relativo à criação de tipos, criação de tabelas, e preenchimento de dados irá estar presente no anexo do relatório.
 
-	A única resposta que não estará completamente respondida nesta secção é a Questão 4, uma vez que a resposta a esta pergunta envolve a descrição de uma série de procedimentos e funções PL/SQL. No entanto, todo este código também esta presente em anexo.
+%	A única resposta que não estará completamente respondida nesta secção é a Questão 4, uma vez que a resposta a esta pergunta envolve a descrição de uma série de procedimentos e funções PL/SQL. No entanto, todo este código também esta presente em anexo.
 
 \subsection{Questão 1}
 
@@ -274,12 +274,13 @@
 	\emph{Qual o dia mais preenchido do mês, sendo que as sobreposições só contam uma vez?	}\\
 
 	A resposta a esta questão envolve uma série de procedimentos e funções em PL/SQL que estão descritos no Anexo.
+	Optamos por desenvolver um algoritmo ``genérico'' que não usa granularidade de 5 minutos, mas sim qualquer precisão implementada pela maquina. A única opção que tivemos que fazer quanto a precisão, foi decidir quando ocorre a transição entre dias. Na qual optou-se por usar segundos, isto é, o dia acaba as '23:59:59' e o novo começa as '00:00:00'.
 
-	Aqui iremos apenas fazer uma descrição das funcionalidades que foram implementadas e as principais restrições da solução.
+%	Aqui iremos apenas fazer uma descrição das funcionalidades que foram implementadas e as principais restrições da solução.
 
-	\begin{itemize}
-		\item	A solução implementada não tem restrições de granularidade, isto é, funciona com qualquer que seja a data do calendário introduzido. 
-	\end{itemize}
+%	\begin{itemize}
+%		\item	A solução implementada não tem restrições de granularidade, isto é, funciona com qualquer que seja a data do calendário introduzido. 
+%	\end{itemize}
 	
 	\inputminted{sql}{3.sql}
 
