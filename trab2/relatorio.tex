@@ -16,7 +16,8 @@
 \newfloat{program}{thp}{lop}
 \floatname{program}{Script}
 
-\title{Tecnologias de Base de Dados}
+\title{Tecnologias de Base de Dados\\
+\Large{Trabalho de SQL3}}
 
 \author{André Fernandes (ei03107) \and Pedro Batista (ext10392)}
 
@@ -251,6 +252,10 @@
 
 	\end{multicols}
 
+	Relativamente à solução do modelo relacional, a utilização de tipos permite que o programador trabalhe a um mais alto nível de abstração. Por exemplo, é muito simples inserir um contato com várias moradas através dos contrutores de CONTATO, S\_MORADA e MORADA. 
+
+	E existem ainda mais vantagens nas relações muitos-para-muitos porque não é necessário criar uma tabela específica para a relação. Como se pode reparar pela relação entre tópicos e categorias e ainda nas referências entre tópicos.  
+
 \section{Interrogações}
 
 	Apesar das respostas às perguntas estarem presentes nesta secção, o código relativo à criação de tipos, criação de tabelas, e preenchimento de dados irá estar presente no anexo do relatório.
@@ -273,14 +278,13 @@
 
 	\emph{Qual o dia mais preenchido do mês, sendo que as sobreposições só contam uma vez?	}\\
 
-	A resposta a esta questão envolve uma série de procedimentos e funções em PL/SQL que estão descritos no Anexo.
-	Optamos por desenvolver um algoritmo ``genérico'' que não usa granularidade de 5 minutos, mas sim qualquer precisão implementada pela maquina. A única opção que tivemos que fazer quanto a precisão, foi decidir quando ocorre a transição entre dias. Na qual optou-se por usar segundos, isto é, o dia acaba as '23:59:59' e o novo começa as '00:00:00'.
+	A resposta a esta questão envolve uma série de procedimentos e funções em PL/SQL que estão apresentados em Anexo.
 
-%	Aqui iremos apenas fazer uma descrição das funcionalidades que foram implementadas e as principais restrições da solução.
+	Optámos por desenvolver um algoritmo suficientemente genérico para lidar com qualquer calendarização ao invés de utilizar um que usasse uma granularidade de 5 minutos. A única decisão que tivemos que fazer prende-se com a precisão e foi decidir quando ocorre a transição entre dias. Na qual optou-se por usar segundos, isto é, um dia acaba as '23:59:59' e o seguinte começa as '00:00:00'.
 
-%	\begin{itemize}
-%		\item	A solução implementada não tem restrições de granularidade, isto é, funciona com qualquer que seja a data do calendário introduzido. 
-%	\end{itemize}
+	Outro aspecto importante da implementação é o facto de ser suficientemente robusta para que o cálculo das horas ocupadas de um dia terem em conta os calendários, que tenham começado em qualquer altura no passado e se estendem até esse dia. E é ainda capaz de nesse cálculo ter em conta as calendarizações resultantes de repetições de um calendário.
+
+	Para testar a nossa implementação basta:
 	
 	\inputminted{sql}{3.sql}
 
