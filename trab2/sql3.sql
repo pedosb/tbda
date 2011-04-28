@@ -193,7 +193,7 @@ INSERT INTO topicos VALUES (CALENDARIO(
     'Trabalho SRSI' -- titulo
   , TIMESTAMP '2010-10-15 12:30:00' -- alteracao
   , S_CATEGORIA((SELECT REF(cc) FROM categorias cc WHERE cc.nome = 'SRSI')) -- categorias
-  , S_TOPICO((SELECT REF(t) FROM topicos t WHERE titulo = 'João'))
+  , s_topico((select ref(t) from topicos t where titulo = 'João'))
   , PERIODO(TIMESTAMP '2010-01-29 01:00:00', TIMESTAMP '2010-01-29 05:00:00')
   , NULL
 ));
@@ -204,6 +204,15 @@ INSERT INTO topicos VALUES (CALENDARIO(
   , NULL
   , PERIODO(TIMESTAMP '2010-01-30 00:00:00', TIMESTAMP '2010-01-30 06:00:00')
   , NULL
+));
+INSERT INTO topicos VALUES (CALENDARIO(
+    'Trabalho TBDA' -- titulo
+  , TIMESTAMP '2010-10-15 12:30:00' -- alteracao
+  , S_CATEGORIA((SELECT REF(cc) FROM categorias cc WHERE cc.nome = 'TBDA')) -- categorias
+  , S_TOPICO((SELECT REF(t) FROM topicos t WHERE titulo = 'Tipo'),
+             (select ref(t) from topicos t where titulo = 'Maria'))
+  , periodo(timestamp '2009-10-30 06:00:00', timestamp '2009-10-30 20:00:00')
+  , repeticao('mensal', periodo(timestamp '2010-01-01 06:00:00', timestamp '2010-02-01 20:00:00'))
 ));
 -------------------------------------------------------------------------------------
 
@@ -616,6 +625,8 @@ is
   sm slot_mes;
   cursor cur is
     select value(t) from topicos t where value(t) is of (calendario);
+  cal calendario;
+  psm s_periodo;
 begin
   sm := slot_mes();
   ps := s_periodo();
@@ -623,8 +634,12 @@ begin
   loop
     fetch cur into top;
     exit when cur%notfound;
-    ps.extend;
-    ps(ps.last) := treat(top as calendario).p;
+    cal := treat(top as calendario);
+    psm := expandir_periodo(cal.p, cal.r);
+    for i in psm.first..psm.last loop
+      ps := conc_periodos(ps, normalizar_periodo(psm(i)));
+    end loop;
+    imprime_periodo(ps);
   end loop;
   data_atual := to_date(ano || '-' || mes || '-1','YYYY-MM-DD');
   loop
@@ -721,9 +736,82 @@ begin
   end loop;
 end;
 
-set serveroutput on;
+create or replace function expandir_periodo
+  (p periodo, r repeticao)
+  return s_periodo
+is
+passou integer;
+idata timestamp;
+fdata timestamp;
+interd interval day(1) to second;
+interm interval year to month;
+ps s_periodo;
 begin
-  --dbms_output.put_line(cast ('2010-12-12 23:59:59' as timestamp));
-  imprime_periodo(normalizar_periodo(periodo(timestamp '2010-10-01 00:00:02',
-                                             timestamp '2010-11-01 00:00:06')));
+  ps := s_periodo(p);
+  if r.frequencia = 'diario' then
+    interd := interval '1' day;
+  elsif r.frequencia = 'semanal' then
+    interd := interval '7' day;
+  elsif r.frequencia = 'mensal' then
+    interm := interval '0-1' year to month;
+  elsif r.frequencia = 'anual' then
+    interm := interval '1-0' year to month;
+  else
+    return ps;
+  end if;
+  idata := p.inicio;
+  fdata := p.fim;
+  loop
+    if interd is null then
+      passou := 0;
+      begin
+        idata := idata + interm;
+        passou := 1;
+        fdata := fdata + interm;
+      exception
+        when others then
+          if passou = 1 then
+            idata := idata + interm;
+          else
+            idata := idata + 2 * interm;
+          end if;
+          fdata := fdata + 2 * interm;
+      end;
+    else
+      passou := 0;
+      begin
+        idata := idata + interd;
+        passou := 1;
+        fdata := fdata + interd;
+      exception
+        when others then
+          if passou = 1 then
+            idata := idata + interd;
+          else
+            idata := idata + 2 * interd;
+          end if;
+          fdata := fdata + 2 * interd;
+      end;
+    end if;
+    exit when idata > r.p.fim;
+    if idata > r.p.inicio and fdata < r.p.fim then
+      ps := conc_periodos(ps, s_periodo(periodo(idata, fdata)));
+    end if;
+  end loop;
+  return ps;
+end;
+
+set serveroutput on;
+declare
+i interval year to month;
+begin
+  i := interval '0-1' year to month;
+  --imprime_periodo(expandir_periodo(periodo(timestamp '2010-10-01 00:01:02',
+  --                                           timestamp '2010-10-01 00:03:06'),
+  --                                 repeticao('semanal',
+  --                                           periodo(timestamp '2009-10-30 00:00:02',
+  --                                           timestamp '2011-12-04 00:00:06'))));
+  dbms_output.put_line(timestamp'2010-01-31 23:59:59' + i);
+  --imprime_periodo(normalizar_periodo(periodo(timestamp '2010-10-01 00:00:02',
+  --                                           timestamp '2010-11-01 00:00:06')));
 end;
