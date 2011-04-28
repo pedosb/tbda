@@ -299,16 +299,14 @@ BEGIN
   END LOOP;
 END;
 
--- Teste impressao
-SET SERVEROUTPUT ON;
-DECLARE
-  ati ATIVIDADE;
-  atis ATIVIDADES;
+CREATE OR REPLACE PROCEDURE imprime_periodo
+  (p IN S_PERIODO)
+IS
 BEGIN
-  ati := ATIVIDADE(1,2);
-  atis := ATIVIDADES(ati, ATIVIDADE(3,4));
-  imprime_atividades(atis);
-END;
+  FOR i IN p.FIRST .. p.LAST LOOP
+    dbms_output.put_line(p(i).inicio || ', ' || p(i).fim);
+  End Loop;
+End;
 
 CREATE OR REPLACE FUNCTION timestamp_para_inteiro
   (t TIMESTAMP)
@@ -330,20 +328,6 @@ BEGIN
   ELSE
     RETURN 0;
   END IF;
-END;
-
--- Teste atividades iguais
-SET SERVEROUTPUT ON;
-DECLARE
-  ati1 ATIVIDADE;
-  ati2 ATIVIDADE;
-  ati3 ATIVIDADE;
-BEGIN
-  ati1 := ATIVIDADE(1,2);
-  ati2 := ATIVIDADE(1,2);
-  ati3 := ATIVIDADE(3,4);
-  dbms_output.put_line('Iguais:' || atividades_iguais(ati1, ati2));
-  dbms_output.put_line('Diferentes:' || atividades_iguais(ati1, ati3));
 END;
 
 -- Retorna uma cópia de <atis> sem repetições
@@ -372,20 +356,6 @@ BEGIN
   RETURN unis;
 END;
 
--- Teste atividades unicas
-SET SERVEROUTPUT ON;
-DECLARE
-  atis ATIVIDADES;
-  unis ATIVIDADES;
-BEGIN
-  atis := ATIVIDADES(ATIVIDADE(1,2), ATIVIDADE(2,3), ATIVIDADE(1,2));
-  dbms_output.put_line('Original');
-  imprime_atividades(atis);
-  unis := atividades_unicas(atis);
-  dbms_output.put_line('Unicas');
-  imprime_atividades(unis);
-END;
-
 -- Retorna a divisão da atividade <ati> em duas no ponto <p>
 CREATE OR REPLACE FUNCTION parte_atividade
   (ati IN ATIVIDADE, p IN INTEGER)
@@ -403,20 +373,6 @@ BEGIN
   END IF;
 END;
 
--- Teste parte atividades
-SET SERVEROUTPUT ON;
-DECLARE
-  ati ATIVIDADE;
-  atis ATIVIDADES;
-BEGIN
-  ati := ATIVIDADE(1, 10);
-  dbms_output.put_line('Atividade');
-  imprime_atividade(ati);
-  atis := parte_atividade(ati, 4);
-  dbms_output.put_line('Atividades');
-  imprime_atividades(atis);
-END;
-
 -- Retorna uma cópia de <in_atis> removendo todas as instancias de <ati>
 CREATE OR REPLACE FUNCTION remove_atividade
   (in_atis IN ATIVIDADES, ati IN ATIVIDADE)
@@ -432,23 +388,6 @@ BEGIN
     END IF;
   END LOOP;
   RETURN atis;
-END;
-
--- Teste remove_atividades
-SET SERVEROUTPUT ON;
-DECLARE
-  novo_atis ATIVIDADES;
-BEGIN
-  novo_atis := remove_atividade(atividades(atividade(1,2), atividade(1,3)), 
-    atividade(1,2));
-  dbms_output.put_line(novo_atis.COUNT);
-  IF NOVO_ATIS.COUNT > 0 THEN
-    FOR i IN novo_atis.FIRST .. novo_atis.LAST LOOP
-      If novo_atis.EXISTS(i) THEN
-        dbms_output.put_line(novo_atis(i)(1) || ',' || novo_atis(i)(2));
-      END IF;
-    END LOOP;
-  END IF;
 END;
 
 -- Transforma um periodo em atividade para um determinado dia
@@ -544,57 +483,35 @@ BEGIN
   RETURN tempo;
 END;
 
--- Teste calcular tempo
-SET SERVEROUTPUT ON;
-DECLARE
-  atis atividades;
-  ps s_periodo;
-BEGIN
-  --SELECT t.periodo INTO ps FROM TOPICOS t WHERE VALUE(t) IS OF CALENDARIO;
-  dbms_output.put_line(calcular_tempo(1, s_periodo(
-    periodo(TIMESTAMP '2010-10-01 00:00:02', TIMESTAMP '2010-10-01 00:00:06'),
-    periodo(TIMESTAMP '2010-10-01 00:00:07', TIMESTAMP '2010-10-01 00:00:09'),
-    PERIODO(TIMESTAMP '2010-10-01 00:00:01', TIMESTAMP '2010-10-01 00:00:04')
-    )));
-  --dbms_output.put_line(cast(to_date('2010-10-2 00:00:00', 
-    'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP));
-  --imprime_atividades(pegar_atividade(1, 
-    PERIODO(TIMESTAMP '2010-10-01 00:00:01', TIMESTAMP '2010-10-02 00:00:01')));
-  --atis := ATIVIDADES(ATIVIDADE(1,2));
-  --imprime_atividades(atis);
-  --atis := conc_atividades(atis, ATIVIDADES(ATIVIDADE(3,4)));
-  --imprime_atividades(atis);
-END;
-
 -- Retorna o dia mais ocupado para um determinado mês
 CREATE OR REPLACE FUNCTION pegar_dia_mais_ocupado
-  (mes in integer, ano in integer)
-  return integer
-is
-  ps s_periodo;
-  top topico;
-  dia integer;
-  tempo_max integer;
-  data_atual date;
-  type slot_mes is varray (31) of integer;
+  (mes IN INTEGER, ano IN INTEGER)
+RETURN INTEGER
+IS
+  ps S_PERIODO;
+  top TOPICO;
+  dia INTEGER;
+  tempo_max INTEGER;
+  DATA_ATUAL DATE;
+  TYPE slot_mes IS VARRAY(31) OF INTEGER;
   sm slot_mes;
-  cursor cur is
-    select value(t) from topicos t where value(t) is of (calendario);
+  CURSOR cur IS
+    SELECT VALUE(t) FROM TOPICOS t WHERE VALUE(t) IS OF (CALENDARIO);
   cal calendario;
   psm s_periodo;
-begin
+BEGIN
   sm := slot_mes();
   ps := s_periodo();
-  open cur;
-  loop
-    fetch cur into top;
-    exit when cur%notfound;
-    cal := treat(top as calendario);
+  OPEN cur;
+  LOOP
+    FETCH cur Into top;
+    EXIT WHEN cur%notfound;
+    cal := TREAT(top AS CALENDARIO);
     psm := expandir_periodo(cal.p, cal.r);
-    for i in psm.first..psm.last loop
+    FOR i IN psm.FIRST .. psm.LAST LOOP
       ps := conc_periodos(ps, normalizar_periodo(psm(i)));
-    end loop;
-  end loop;
+    END loop;
+  END loop;
   data_atual := to_date(ano || '-' || mes || '-1','YYYY-MM-DD');
   LOOP
     EXIT WHEN mes != EXTRACT(MONTH FROM data_atual);
@@ -683,82 +600,177 @@ BEGIN
 END;
 
 -- Retorna periodos que são repetições de um determinado periodo
-create or replace function expandir_periodo
-  (p periodo, r repeticao)
-  return s_periodo
-is
-passou integer;
-idata timestamp;
-fdata timestamp;
-interd interval day(1) to second;
-interm interval year to month;
-ps s_periodo;
-begin
+CREATE OR REPLACE FUNCTION expandir_periodo
+  (p PERIODO, r REPETICAO)
+RETURN s_periodo
+IS
+  passou INTEGER;
+  idata TIMESTAMP;
+  fdata TIMESTAMP;
+  interd INTERVAL DAY(1) TO SECOND;
+  interm INTERVAL YEAR TO MONTH;
+  ps S_PERIODO;
+BEGIN
   ps := s_periodo(p);
-  if r.frequencia = 'diario' then
-    interd := interval '1' day;
-  elsif r.frequencia = 'semanal' then
-    interd := interval '7' day;
-  elsif r.frequencia = 'mensal' then
-    interm := interval '0-1' year to month;
-  elsif r.frequencia = 'anual' then
-    interm := interval '1-0' year to month;
-  else
-    return ps;
-  end if;
+  IF r.frequencia = 'diario' THEN
+    interd := INTERVAL '1' DAY;
+  ELSIF r.frequencia = 'semanal' THEN
+    interd := INTERVAL '7' DAY;
+  ELSIF r.frequencia = 'mensal' THEN
+    interm := interval '0-1' YEAR TO MONTH;
+  ELSIF r.frequencia = 'anual' THEN
+    interm := INTERVAL '1-0' YEAR TO MONTH;
+  ELSE
+    RETURN ps;
+  END IF;
   idata := p.inicio;
   fdata := p.fim;
-  loop
-    if interd is null then
+  LOOP
+    IF interd IS NULL THEN
       passou := 0;
-      begin
+      BEGIN
         idata := idata + interm;
         passou := 1;
         fdata := fdata + interm;
-      exception
-        when others then
-          if passou = 1 then
+      EXCEPTION
+        WHEN OTHERS THEN
+          IF passou = 1 THEN
             idata := idata + interm;
-          else
+          ELSE
             idata := idata + 2 * interm;
-          end if;
+          END IF;
           fdata := fdata + 2 * interm;
-      end;
-    else
+      END;
+    ELSE
       passou := 0;
-      begin
+      BEGIN
         idata := idata + interd;
         passou := 1;
         fdata := fdata + interd;
-      exception
-        when others then
-          if passou = 1 then
+      EXCEPTION
+        WHEN OTHERS THEN
+          IF passou = 1 THEN
             idata := idata + interd;
-          else
+          ELSE
             idata := idata + 2 * interd;
-          end if;
+          END IF;
           fdata := fdata + 2 * interd;
-      end;
-    end if;
-    exit when idata > r.p.fim;
-    if idata > r.p.inicio and fdata < r.p.fim then
+      END;
+    END IF;
+    EXIT WHEN idata > r.p.fim;
+    IF idata > r.p.inicio AND fdata < r.p.fim THEN
       ps := conc_periodos(ps, s_periodo(periodo(idata, fdata)));
-    end if;
-  end loop;
-  return ps;
-end;
+    END IF;
+  END LOOP;
+  RETURN ps;
+END;
 
-set serveroutput on;
-declare
-i interval year to month;
-begin
-  i := interval '0-1' year to month;
-  --imprime_periodo(expandir_periodo(periodo(timestamp '2010-10-01 00:01:02',
-  --                                           timestamp '2010-10-01 00:03:06'),
-  --                                 repeticao('semanal',
-  --                                           periodo(timestamp '2009-10-30 00:00:02',
-  --                                           timestamp '2011-12-04 00:00:06'))));
-  dbms_output.put_line(timestamp'2010-01-31 23:59:59' + i);
-  --imprime_periodo(normalizar_periodo(periodo(timestamp '2010-10-01 00:00:02',
-  --                                           timestamp '2010-11-01 00:00:06')));
-end;
+
+--################Testes#################################
+
+-- Teste impressao
+SET SERVEROUTPUT ON;
+DECLARE
+  ati ATIVIDADE;
+  atis ATIVIDADES;
+BEGIN
+  ati := ATIVIDADE(1,2);
+  atis := ATIVIDADES(ati, ATIVIDADE(3,4));
+  imprime_atividades(atis);
+END;
+
+-- Teste atividades iguais
+SET SERVEROUTPUT ON;
+DECLARE
+  ati1 ATIVIDADE;
+  ati2 ATIVIDADE;
+  ati3 ATIVIDADE;
+BEGIN
+  ati1 := ATIVIDADE(1,2);
+  ati2 := ATIVIDADE(1,2);
+  ati3 := ATIVIDADE(3,4);
+  dbms_output.put_line('Iguais:' || atividades_iguais(ati1, ati2));
+  dbms_output.put_line('Diferentes:' || atividades_iguais(ati1, ati3));
+END;
+
+-- Teste atividades unicas
+SET SERVEROUTPUT ON;
+DECLARE
+  atis ATIVIDADES;
+  unis ATIVIDADES;
+BEGIN
+  atis := ATIVIDADES(ATIVIDADE(1,2), ATIVIDADE(2,3), ATIVIDADE(1,2));
+  dbms_output.put_line('Original');
+  imprime_atividades(atis);
+  unis := atividades_unicas(atis);
+  dbms_output.put_line('Unicas');
+  imprime_atividades(unis);
+END;
+
+-- Teste parte atividades
+SET SERVEROUTPUT ON;
+DECLARE
+  ati ATIVIDADE;
+  atis ATIVIDADES;
+BEGIN
+  ati := ATIVIDADE(1, 10);
+  dbms_output.put_line('Atividade');
+  imprime_atividade(ati);
+  atis := parte_atividade(ati, 4);
+  dbms_output.put_line('Atividades');
+  imprime_atividades(atis);
+END;
+
+-- Teste remove_atividades
+SET SERVEROUTPUT ON;
+DECLARE
+  novo_atis ATIVIDADES;
+BEGIN
+  novo_atis := remove_atividade(atividades(atividade(1,2), atividade(1,3)), 
+    atividade(1,2));
+  dbms_output.put_line(novo_atis.COUNT);
+  IF NOVO_ATIS.COUNT > 0 THEN
+    FOR i IN novo_atis.FIRST .. novo_atis.LAST LOOP
+      If novo_atis.EXISTS(i) THEN
+        dbms_output.put_line(novo_atis(i)(1) || ',' || novo_atis(i)(2));
+      END IF;
+    END LOOP;
+  End If;
+END;
+
+-- Teste calcular_tempo
+SET SERVEROUTPUT ON;
+DECLARE
+  atis ATIVIDADES;
+  ps S_PERIODO;
+BEGIN
+  --SELECT t.periodo INTO ps FROM TOPICOS t WHERE VALUE(t) IS OF CALENDARIO;
+  dbms_output.put_line(calcular_tempo(1, s_periodo(
+    periodo(TIMESTAMP '2010-10-01 00:00:02', TIMESTAMP '2010-10-01 00:00:06'),
+    periodo(TIMESTAMP '2010-10-01 00:00:07', TIMESTAMP '2010-10-01 00:00:09'),
+    PERIODO(TIMESTAMP '2010-10-01 00:00:01', TIMESTAMP '2010-10-01 00:00:04')
+    )));
+  --dbms_output.put_line(CAST(TO_DATE('2010-10-2 00:00:00', 
+    'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP));
+  --imprime_atividades(pegar_atividade(1, 
+    PERIODO(TIMESTAMP '2010-10-01 00:00:01', TIMESTAMP '2010-10-02 00:00:01')));
+  --atis := ATIVIDADES(ATIVIDADE(1,2));
+  --imprime_atividades(atis);
+  --atis := conc_atividades(atis, ATIVIDADES(ATIVIDADE(3,4)));
+  --imprime_atividades(atis);
+End;
+
+-- Teste expandir_periodo e normalizar_periodo
+SET SERVEROUTPUT ON;
+DECLARE
+  i INTERVAL YEAR TO MONTH;
+BEGIN
+  i := INTERVAL '0-1' YEAR TO MONTH;
+  imprime_periodo(expandir_periodo(PERIODO(TIMESTAMP '2010-10-01 00:01:02',
+                                           TIMESTAMP '2010-10-01 00:03:06'),
+                                   REPETICAO('semanal',
+                                      PERIODO(timestamp '2009-10-30 00:00:02',
+                                      TIMESTAMP '2011-12-04 00:00:06'))));
+  imprime_periodo(normalizar_periodo(PERIODO(TIMESTAMP '2010-10-01 00:00:02',
+                                             TIMESTAMP '2010-11-01 00:00:06')));
+END;
