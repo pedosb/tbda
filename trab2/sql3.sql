@@ -32,7 +32,7 @@ CREATE OR REPLACE TYPE PERIODO AS OBJECT(
 
 ------------------REPETICAO-------------------------------
 CREATE OR REPLACE TYPE REPETICAO AS OBJECT(
-  frequencia  VARCHAR2(7), --CHECK ( frequencia IN ('dia', 'semana', 'mês', 'ano'))
+  FREQUENCIA  VARCHAR2(7), 
   p           PERIODO
 );
 ----------------------------------------------------------
@@ -105,11 +105,15 @@ NESTED TABLE referencias STORE AS referencias_nested;
 --################INSERTs#################################
 ------------------CATEGORIAS------------------------------
 INSERT INTO CATEGORIAS VALUES ('FEUP', NULL);
-INSERT INTO CATEGORIAS VALUES ('SRSI', (SELECT REF(cc) FROM CATEGORIAS cc WHERE nome = 'FEUP'));
-INSERT INTO CATEGORIAS VALUES ('TBDA', (SELECT REF(cc) FROM CATEGORIAS cc WHERE nome = 'FEUP'));
+INSERT INTO CATEGORIAS VALUES ('SRSI', 
+  (SELECT REF(cc) FROM CATEGORIAS cc WHERE nome = 'FEUP'));
+INSERT INTO CATEGORIAS VALUES ('TBDA', 
+  (SELECT REF(cc) FROM CATEGORIAS cc WHERE nome = 'FEUP'));
 INSERT INTO CATEGORIAS VALUES ('Casa', NULL);
-INSERT INTO CATEGORIAS VALUES ('Supermercado', (SELECT REF(cc) FROM CATEGORIAS cc WHERE nome = 'Casa'));
-INSERT INTO CATEGORIAS VALUES ('Outros', (SELECT REF(cc) FROM CATEGORIAS cc WHERE nome = 'Casa'));
+INSERT INTO CATEGORIAS VALUES ('Supermercado', 
+  (SELECT REF(cc) FROM CATEGORIAS cc WHERE nome = 'Casa'));
+INSERT INTO CATEGORIAS VALUES ('Outros', 
+  (SELECT REF(cc) FROM CATEGORIAS cc WHERE nome = 'Casa'));
 INSERT INTO CATEGORIAS VALUES ('Trabalho', NULL);
 
 SELECT * FROM CATEGORIAS;
@@ -132,7 +136,8 @@ INSERT INTO TOPICOS VALUES (CONTATO(
 INSERT INTO TOPICOS VALUES (CONTATO( 
   'Maria', -- titulo
   TIMESTAMP '2010-10-15 12:30:00', -- alteracao
-  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'FEUP')), -- categorias
+  S_CATEGORIA((SELECT REF(CC) FROM CATEGORIAS CC WHERE CC.NOME = 'FEUP')), 
+  -- categorias
   NULL, -- referencias
   'Maria Joana', -- nome
   NULL, -- Telefone
@@ -146,7 +151,8 @@ INSERT INTO TOPICOS VALUES (CONTATO(
 INSERT INTO TOPICOS VALUES (TAREFA(
   'Comprar papel', -- titulo
   TIMESTAMP '2010-10-15 12:30:00', -- alteracao
-  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'Supermercado')), -- categorias
+  S_CATEGORIA(
+    (SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.NOME = 'Supermercado')), 
   S_TOPICO((SELECT REF(t) FROM TOPICOS t WHERE titulo = 'João'), 
     (SELECT REF(t) FROM TOPICOS t WHERE titulo = 'Maria')), -- referencias
   TIMESTAMP '2010-10-20 12:30:00',
@@ -156,7 +162,7 @@ INSERT INTO TOPICOS VALUES (TAREFA(
 INSERT INTO TOPICOS VALUES (TAREFA(
   'Pagar aluguel', -- titulo
   TIMESTAMP '2010-10-15 12:30:00', -- alteracao
-  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'Outros')), -- categorias
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'Outros')), 
   NULL, -- referencias
   TIMESTAMP '2010-10-20 12:30:00', 
   'N',
@@ -165,7 +171,7 @@ INSERT INTO TOPICOS VALUES (TAREFA(
 INSERT INTO TOPICOS VALUES (TAREFA(
   'Checar correspondencia', -- titulo
   TIMESTAMP '2010-10-15 12:30:00', -- alteracao
-  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'Casa')), -- categorias
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'Casa')),
   NULL, -- referencias
   TIMESTAMP '2010-10-20 12:30:00', 
   'N',
@@ -177,7 +183,7 @@ INSERT INTO TOPICOS VALUES (TAREFA(
 INSERT INTO TOPICOS VALUES (MEMO(
   'Tipo' -- titulo
   TIMESTAMP '2010-10-15 12:30:00', -- alteracao
-  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'Casa')), -- categorias
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'Casa')),
   NULL, -- referencias
   'Para usar o tipo set em uma tabela tem que usar nested table',
 ));
@@ -187,7 +193,7 @@ INSERT INTO TOPICOS VALUES (MEMO(
 INSERT INTO TOPICOS VALUES (CALENDARIO(
   'Trabalho TBDA', -- titulo
   TIMESTAMP '2010-10-15 12:30:00', -- alteracao
-  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'TBDA')), -- categorias
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'TBDA')),
   S_TOPICO((SELECT REF(t) FROM TOPICOS t WHERE titulo = 'Tipo'),
     (SELECT REF(t) FROM TOPICOS t WHERE titulo = 'Maria')),
   PERIODO(TIMESTAMP '2010-01-29 00:00:00', TIMESTAMP '2010-01-29 03:00:00'),
@@ -196,7 +202,7 @@ INSERT INTO TOPICOS VALUES (CALENDARIO(
 INSERT INTO TOPICOS VALUES (CALENDARIO(
   'Trabalho SRSI', -- titulo
   TIMESTAMP '2010-10-15 12:30:00', -- alteracao
-  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'SRSI')), -- categorias
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'SRSI')),
   S_TOPICO((SELECT REF(t) FROM TOPICOS t WHERE titulo = 'João')),
   PERIODO(TIMESTAMP '2010-01-29 01:00:00', TIMESTAMP '2010-01-29 05:00:00'),
   NULL
@@ -204,7 +210,7 @@ INSERT INTO TOPICOS VALUES (CALENDARIO(
 INSERT INTO TOPICOS VALUES (CALENDARIO(
   'Aula TBDA', -- titulo
   TIMESTAMP '2010-10-15 12:30:00' -- alteracao
-  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'TBDA')), -- categorias
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'TBDA')),
   NULL,
   PERIODO(TIMESTAMP '2010-01-30 00:00:00', TIMESTAMP '2010-01-30 06:00:00'),
   NULL
@@ -334,7 +340,8 @@ BEGIN
   h := EXTRACT(hour FROM t);
   mi := EXTRACT(minute FROM t);
   s := EXTRACT(second FROM t);
-  dbms_output.put_line(y || '/' || m || '/' || d || ' ' || h || ':' || mi || ':' || s);
+  dbms_output.put_line(y || '/' || m || '/' || d || ' ' || h || ':' || 
+    mi || ':' || s);
 END;
 
 CREATE OR REPLACE FUNCTION timestamp_para_inteiro
@@ -342,7 +349,9 @@ CREATE OR REPLACE FUNCTION timestamp_para_inteiro
 RETURN INTEGER
 IS
 BEGIN
-  return EXTRACT(HOUR FROM t) * 3600 + EXTRACT(MINUTE FROM t) * 60 + EXTRACT(SECOND FROM t);
+  RETURN EXTRACT(HOUR FROM t) * 3600 + 
+    EXTRACT(MINUTE FROM t) * 60 + 
+    EXTRACT(SECOND FROM t);
 END;
 
 CREATE OR REPLACE FUNCTION atividades_iguais
@@ -461,7 +470,8 @@ SET SERVEROUTPUT ON;
 DECLARE
   novo_atis ATIVIDADES;
 BEGIN
-  novo_atis := remove_atividade(atividades(atividade(1,2), atividade(1,3)), atividade(1,2));
+  novo_atis := remove_atividade(atividades(atividade(1,2), atividade(1,3)), 
+    atividade(1,2));
   dbms_output.put_line(novo_atis.COUNT);
   IF NOVO_ATIS.COUNT > 0 THEN
     FOR i IN novo_atis.FIRST .. novo_atis.LAST LOOP
@@ -483,13 +493,20 @@ IS
 BEGIN
   dia_inicio := EXTRACT(DAY FROM p.inicio);
   IF dia = dia_inicio AND dia = EXTRACT(DAY FROM p.fim) THEN
-    RETURN atividades(atividade(timestamp_para_inteiro(p.inicio), timestamp_para_inteiro(p.fim)));
+    RETURN ATIVIDADES(ATIVIDADE(TIMESTAMP_PARA_INTEIRO(P.INICIO), 
+      TIMESTAMP_PARA_INTEIRO(P.FIM)));
   ELSE
     IF dia = dia_inicio THEN
-      nova_data := '2010-' || EXTRACT(MONTH FROM p.inicio) || '-' || (dia+1) || ' 00:00:00';
+      nova_data := '2010-' || EXTRACT(MONTH FROM p.inicio) || '-' || (dia+1) ||
+        ' 00:00:00';
       --TODO: não regorna nada (não adianta recursividade já que o dia é passado
-      RETURN conc_atividades(atividades(atividade(timestamp_para_inteiro(p.inicio), 86400)),
-                             pegar_atividade(dia, periodo(CAST(TO_DATE(nova_data,'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP) , p.fim)));
+      RETURN conc_atividades(
+        atividades(atividade(timestamp_para_inteiro(p.inicio), 86400)),
+          pegar_atividade(dia, 
+            periodo(
+              CAST(TO_DATE(nova_data,'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP) , 
+                P.FIM
+              )));
     END IF;
   END IF;
   RETURN atividades();
@@ -584,9 +601,12 @@ BEGIN
   dbms_output.put_line(calcular_tempo(1, s_periodo(
     periodo(TIMESTAMP '2010-10-01 00:00:02', TIMESTAMP '2010-10-01 00:00:06'),
     periodo(TIMESTAMP '2010-10-01 00:00:07', TIMESTAMP '2010-10-01 00:00:09'),
-    periodo(TIMESTAMP '2010-10-01 00:00:01', TIMESTAMP '2010-10-01 00:00:04'))));
-  --dbms_output.put_line(cast(to_date('2010-10-2 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP));
-  --imprime_atividades(pegar_atividade(1, PERIODO(TIMESTAMP '2010-10-01 00:00:01', TIMESTAMP '2010-10-02 00:00:01')));
+    PERIODO(TIMESTAMP '2010-10-01 00:00:01', TIMESTAMP '2010-10-01 00:00:04')
+    )));
+  --dbms_output.put_line(cast(to_date('2010-10-2 00:00:00', 
+    'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP));
+  --imprime_atividades(pegar_atividade(1, 
+    PERIODO(TIMESTAMP '2010-10-01 00:00:01', TIMESTAMP '2010-10-02 00:00:01')));
   --atis := ATIVIDADES(ATIVIDADE(1,2));
   --imprime_atividades(atis);
   --atis := conc_atividades(atis, ATIVIDADES(ATIVIDADE(3,4)));
