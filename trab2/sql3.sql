@@ -28,6 +28,7 @@ CREATE OR REPLACE TYPE PERIODO AS OBJECT(
   inicio  TIMESTAMP,
   fim     TIMESTAMP
 );
+CREATE OR REPLACE TYPE S_PERIODO AS TABLE OF PERIODO;
 ----------------------------------------------------------
 
 ------------------REPETICAO-------------------------------
@@ -181,11 +182,11 @@ INSERT INTO TOPICOS VALUES (TAREFA(
 
 ------------------MEMO------------------------------------
 INSERT INTO TOPICOS VALUES (MEMO(
-  'Tipo' -- titulo
+  'Tipo', -- titulo
   TIMESTAMP '2010-10-15 12:30:00', -- alteracao
   S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'Casa')),
   NULL, -- referencias
-  'Para usar o tipo set em uma tabela tem que usar nested table',
+  'Para usar o tipo set em uma tabela tem que usar nested table'
 ));
 ----------------------------------------------------------
 
@@ -209,21 +210,21 @@ INSERT INTO TOPICOS VALUES (CALENDARIO(
 ));
 INSERT INTO TOPICOS VALUES (CALENDARIO(
   'Aula TBDA', -- titulo
-  TIMESTAMP '2010-10-15 12:30:00' -- alteracao
+  TIMESTAMP '2010-10-15 12:30:00', -- alteracao
   S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'TBDA')),
   NULL,
   PERIODO(TIMESTAMP '2010-01-30 00:00:00', TIMESTAMP '2010-01-30 06:00:00'),
   NULL
 ));
 INSERT INTO TOPICOS VALUES (CALENDARIO(
-    'Trabalho TBDA' -- titulo
-  , TIMESTAMP '2010-10-15 12:30:00' -- alteracao
-  , S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'TBDA'))
-  , S_TOPICO((SELECT REF(t) FROM TOPICOS t WHERE titulo = 'Tipo'),
-             (SELECT REF(t) FROM TOPICOS t WHERE titulo = 'Maria'))
-  , PERIODO(TIMESTAMP '2009-10-30 06:00:00', TIMESTAMP '2009-10-30 20:00:00')
-  , REPETICAO('mensal', PERIODO(TIMESTAMP '2010-01-01 06:00:00',
-                                TIMESTAMP '2010-02-01 20:00:00'))
+  'Trabalho TBDA', -- titulo
+  TIMESTAMP '2010-10-15 12:30:00', -- alteracao
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'TBDA')),
+  S_TOPICO((SELECT REF(t) FROM TOPICOS t WHERE titulo = 'Tipo'),
+          (SELECT REF(t) FROM TOPICOS t WHERE titulo = 'Maria')),
+  PERIODO(TIMESTAMP '2009-10-30 06:00:00', TIMESTAMP '2009-10-30 20:00:00'),
+  REPETICAO('mensal', PERIODO(TIMESTAMP '2010-01-01 06:00:00',
+                              TIMESTAMP '2010-02-01 20:00:00'))
 ));
 ----------------------------------------------------------
 
@@ -250,7 +251,7 @@ GROUP BY t.titulo
 HAVING COUNT(titulo) > 1;
 ----------------------------------------------------------
 
-------------------QUESTÃO 4-------------------------------
+------------------QUESTÃO 3-------------------------------
 SET SERVEROUTPUT ON;
 DECLARE
 BEGIN
@@ -393,7 +394,7 @@ END;
 -- Transforma um periodo em atividade para um determinado dia
 CREATE OR REPLACE FUNCTION pegar_atividade
   --Assume que o mês e ano do periodo são iguais
-  (dia IN INTEGER, p IN periodo)
+  (dia IN INTEGER, p IN PERIODO)
 RETURN ATIVIDADES
 IS
   atis atividades;
@@ -483,53 +484,6 @@ BEGIN
   RETURN tempo;
 END;
 
--- Retorna o dia mais ocupado para um determinado mês
-CREATE OR REPLACE FUNCTION pegar_dia_mais_ocupado
-  (mes IN INTEGER, ano IN INTEGER)
-RETURN INTEGER
-IS
-  ps S_PERIODO;
-  top TOPICO;
-  dia INTEGER;
-  tempo_max INTEGER;
-  DATA_ATUAL DATE;
-  TYPE slot_mes IS VARRAY(31) OF INTEGER;
-  sm slot_mes;
-  CURSOR cur IS
-    SELECT VALUE(t) FROM TOPICOS t WHERE VALUE(t) IS OF (CALENDARIO);
-  cal calendario;
-  psm s_periodo;
-BEGIN
-  sm := slot_mes();
-  ps := s_periodo();
-  OPEN cur;
-  LOOP
-    FETCH cur Into top;
-    EXIT WHEN cur%notfound;
-    cal := TREAT(top AS CALENDARIO);
-    psm := expandir_periodo(cal.p, cal.r);
-    FOR i IN psm.FIRST .. psm.LAST LOOP
-      ps := conc_periodos(ps, normalizar_periodo(psm(i)));
-    END loop;
-  END loop;
-  data_atual := to_date(ano || '-' || mes || '-1','YYYY-MM-DD');
-  LOOP
-    EXIT WHEN mes != EXTRACT(MONTH FROM data_atual);
-    dia := EXTRACT(DAY FROM data_atual);
-    sm.EXTEND;
-    sm(sm.LAST) := calcular_tempo(dia, ps);
-    data_atual := data_atual + INTERVAL '1' DAY;
-  END LOOP;
-  tempo_max := 0;
-  FOR i In sm.FIRST .. sm.LAST LOOP
-    IF sm(i) > tempo_max THEN
-      dia := i;
-      tempo_max := sm(i);
-    END IF;
-  END LOOP;
-  RETURN dia;
-END;
-
 -- Retorna um periodo que é uma cópia de <p1> e <p2>
 CREATE OR REPLACE FUNCTION conc_periodos
   (p1 S_PERIODO, p2 S_PERIODO)
@@ -547,56 +501,6 @@ BEGIN
     END LOOP;
   END IF;
   RETURN new_ps;
-END;
-
--- Retorna tantos periodos quanto necessário para que o periodo máximo seja de
---um dia.
-CREATE OR REPLACE FUNCTION normalizar_periodo
-  (p PERIODO)
-RETURN s_periodo
-IS
-  ano_inicial INTEGER;
-  ultimo_dia TIMESTAMP;
-  mes_inicial INTEGER;
-  ultimo_dia_mes TIMESTAMP;
-  dia_inicial INTEGER;
-  ultima_hora TIMESTAMP;
-BEGIN
-  ano_inicial := EXTRACT(YEAR FROM p.inicio);
-  IF ano_inicial != EXTRACT(YEAR FROM p.fim) THEN
-    dbms_output.put_line(ano_inicial);
-    ultimo_dia := CAST(to_date(ano_inicial || 
-      '-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP);
-    dbms_output.put_line(ano_inicial);
-    RETURN conc_periodos(normalizar_periodo(PERIODO(p.inicio, ultimo_dia)),
-      normalizar_periodo(PERIODO(ultimo_dia + INTERVAL '1' SECOND, p.fim)));
-      
-  END IF;
-  mes_inicial := EXTRACT(MONTH FROM p.inicio);
-  IF mes_inicial != EXTRACT(MONTH FROM p.fim) THEN
-    ultimo_dia_mes := CAST(last_day(to_date(ano_inicial || '-' || mes_inicial ||
-      '-3 23:59:59', 'YYYY-MM-DD HH24:MI:SS')) AS TIMESTAMP);
-    RETURN conc_periodos(normalizar_periodo(PERIODO(p.inicio, ultimo_dia_mes)),
-      normalizar_periodo(PERIODO(ultimo_dia_mes + INTERVAL '1' SECOND, p.fim)));
-      
-  END IF;
-  dia_inicial := EXTRACT(DAY FROM p.inicio);
-  IF dia_inicial != EXTRACT(DAY FROM p.fim) THEN
-    ultima_hora := CAST(to_date(ano_inicial || '-' || mes_inicial || '-' ||
-      dia_inicial || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP);
-    RETURN conc_periodos(S_PERIODO(PERIODO(p.inicio, ultima_hora)),
-      normalizar_periodo(PERIODO(ultima_hora + INTERVAL '1' SECOND, p.fim)));
-  END IF;
-  RETURN S_PERIODO(p);
-END;
-
-CREATE OR REPLACE PROCEDURE imprime_periodo
-  (p IN S_PERIODO)
-IS
-BEGIN
-  FOR i IN p.FIRST .. p.LAST LOOP
-    dbms_output.put_line(p(i).inicio || ', ' || p(i).fim);
-  END LOOP;
 END;
 
 -- Retorna periodos que são repetições de um determinado periodo
@@ -665,6 +569,102 @@ BEGIN
   RETURN ps;
 END;
 
+-- Retorna tantos periodos quanto necessário para que o periodo máximo seja de
+--um dia.
+CREATE OR REPLACE FUNCTION normalizar_periodo
+  (p PERIODO)
+RETURN s_periodo
+IS
+  ano_inicial INTEGER;
+  ultimo_dia TIMESTAMP;
+  mes_inicial INTEGER;
+  ultimo_dia_mes TIMESTAMP;
+  dia_inicial INTEGER;
+  ultima_hora TIMESTAMP;
+BEGIN
+  ano_inicial := EXTRACT(YEAR FROM p.inicio);
+  IF ano_inicial != EXTRACT(YEAR FROM p.fim) THEN
+    dbms_output.put_line(ano_inicial);
+    ultimo_dia := CAST(to_date(ano_inicial || 
+      '-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP);
+    dbms_output.put_line(ano_inicial);
+    RETURN conc_periodos(normalizar_periodo(PERIODO(p.inicio, ultimo_dia)),
+      normalizar_periodo(PERIODO(ultimo_dia + INTERVAL '1' SECOND, p.fim)));
+      
+  END IF;
+  mes_inicial := EXTRACT(MONTH FROM p.inicio);
+  IF mes_inicial != EXTRACT(MONTH FROM p.fim) THEN
+    ultimo_dia_mes := CAST(last_day(to_date(ano_inicial || '-' || mes_inicial ||
+      '-3 23:59:59', 'YYYY-MM-DD HH24:MI:SS')) AS TIMESTAMP);
+    RETURN conc_periodos(normalizar_periodo(PERIODO(p.inicio, ultimo_dia_mes)),
+      normalizar_periodo(PERIODO(ultimo_dia_mes + INTERVAL '1' SECOND, p.fim)));
+      
+  END IF;
+  dia_inicial := EXTRACT(DAY FROM p.inicio);
+  IF dia_inicial != EXTRACT(DAY FROM p.fim) THEN
+    ultima_hora := CAST(to_date(ano_inicial || '-' || mes_inicial || '-' ||
+      dia_inicial || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP);
+    RETURN conc_periodos(S_PERIODO(PERIODO(p.inicio, ultima_hora)),
+      normalizar_periodo(PERIODO(ultima_hora + INTERVAL '1' SECOND, p.fim)));
+  END IF;
+  RETURN S_PERIODO(p);
+END;
+
+-- Retorna o dia mais ocupado para um determinado mês
+CREATE OR REPLACE FUNCTION pegar_dia_mais_ocupado
+  (mes IN INTEGER, ano IN INTEGER)
+RETURN INTEGER
+IS
+  ps S_PERIODO;
+  top TOPICO;
+  dia INTEGER;
+  tempo_max INTEGER;
+  DATA_ATUAL DATE;
+  TYPE slot_mes IS VARRAY(31) OF INTEGER;
+  sm slot_mes;
+  CURSOR cur IS
+    SELECT VALUE(t) FROM TOPICOS t WHERE VALUE(t) IS OF (CALENDARIO);
+  cal calendario;
+  psm s_periodo;
+BEGIN
+  sm := slot_mes();
+  ps := s_periodo();
+  OPEN cur;
+  LOOP
+    FETCH cur Into top;
+    EXIT WHEN cur%notfound;
+    cal := TREAT(top AS CALENDARIO);
+    psm := expandir_periodo(cal.p, cal.r);
+    FOR i IN psm.FIRST .. psm.LAST LOOP
+      ps := conc_periodos(ps, normalizar_periodo(psm(i)));
+    END loop;
+  END loop;
+  data_atual := to_date(ano || '-' || mes || '-1','YYYY-MM-DD');
+  LOOP
+    EXIT WHEN mes != EXTRACT(MONTH FROM data_atual);
+    dia := EXTRACT(DAY FROM data_atual);
+    sm.EXTEND;
+    sm(sm.LAST) := calcular_tempo(dia, ps);
+    data_atual := data_atual + INTERVAL '1' DAY;
+  END LOOP;
+  tempo_max := 0;
+  FOR i In sm.FIRST .. sm.LAST LOOP
+    IF sm(i) > tempo_max THEN
+      dia := i;
+      tempo_max := sm(i);
+    END IF;
+  END LOOP;
+  RETURN dia;
+END;
+
+CREATE OR REPLACE PROCEDURE imprime_periodo
+  (p IN S_PERIODO)
+IS
+BEGIN
+  FOR i IN p.FIRST .. p.LAST LOOP
+    dbms_output.put_line(p(i).inicio || ', ' || p(i).fim);
+  END LOOP;
+END;
 
 --################Testes#################################
 
@@ -735,7 +735,7 @@ BEGIN
         dbms_output.put_line(novo_atis(i)(1) || ',' || novo_atis(i)(2));
       END IF;
     END LOOP;
-  End If;
+  END IF;
 END;
 
 -- Teste calcular_tempo
@@ -751,14 +751,14 @@ BEGIN
     PERIODO(TIMESTAMP '2010-10-01 00:00:01', TIMESTAMP '2010-10-01 00:00:04')
     )));
   --dbms_output.put_line(CAST(TO_DATE('2010-10-2 00:00:00', 
-    'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP));
+  --      'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP));
   --imprime_atividades(pegar_atividade(1, 
-    PERIODO(TIMESTAMP '2010-10-01 00:00:01', TIMESTAMP '2010-10-02 00:00:01')));
+  --  PERIODO(TIMESTAMP '2010-10-01 00:00:01', TIMESTAMP '2010-10-02 00:00:01')));
   --atis := ATIVIDADES(ATIVIDADE(1,2));
   --imprime_atividades(atis);
   --atis := conc_atividades(atis, ATIVIDADES(ATIVIDADE(3,4)));
   --imprime_atividades(atis);
-End;
+END;
 
 -- Teste expandir_periodo e normalizar_periodo
 SET SERVEROUTPUT ON;
