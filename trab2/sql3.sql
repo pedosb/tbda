@@ -32,7 +32,7 @@ CREATE OR REPLACE TYPE PERIODO AS OBJECT(
 
 ------------------REPETICAO-------------------------------
 CREATE OR REPLACE TYPE REPETICAO AS OBJECT(
-  FREQUENCIA  VARCHAR2(7), 
+  frequencia  VARCHAR2(7), 
   p           PERIODO
 );
 ----------------------------------------------------------
@@ -215,14 +215,15 @@ INSERT INTO TOPICOS VALUES (CALENDARIO(
   PERIODO(TIMESTAMP '2010-01-30 00:00:00', TIMESTAMP '2010-01-30 06:00:00'),
   NULL
 ));
-INSERT INTO topicos VALUES (CALENDARIO(
+INSERT INTO TOPICOS VALUES (CALENDARIO(
     'Trabalho TBDA' -- titulo
   , TIMESTAMP '2010-10-15 12:30:00' -- alteracao
-  , S_CATEGORIA((SELECT REF(cc) FROM categorias cc WHERE cc.nome = 'TBDA')) -- categorias
-  , S_TOPICO((SELECT REF(t) FROM topicos t WHERE titulo = 'Tipo'),
-             (select ref(t) from topicos t where titulo = 'Maria'))
-  , periodo(timestamp '2009-10-30 06:00:00', timestamp '2009-10-30 20:00:00')
-  , repeticao('mensal', periodo(timestamp '2010-01-01 06:00:00', timestamp '2010-02-01 20:00:00'))
+  , S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'TBDA'))
+  , S_TOPICO((SELECT REF(t) FROM TOPICOS t WHERE titulo = 'Tipo'),
+             (SELECT REF(t) FROM TOPICOS t WHERE titulo = 'Maria'))
+  , PERIODO(TIMESTAMP '2009-10-30 06:00:00', TIMESTAMP '2009-10-30 20:00:00')
+  , REPETICAO('mensal', PERIODO(TIMESTAMP '2010-01-01 06:00:00',
+                                TIMESTAMP '2010-02-01 20:00:00'))
 ));
 ----------------------------------------------------------
 
@@ -236,10 +237,8 @@ FROM
   GROUP BY VALUE(ca).nome, SYS_TYPEID(VALUE(t)))
 INNER JOIN USER_TYPES ut
 ON ut.typeid = SYSID AND ut.supertype_name = 'TOPICO'
-ORDER BY categoria;
+ORDER BY CATEGORIA;
 
--- Porque o sys_typeid não é unico?
--- Como agrupar por tipo?
 SELECT * FROM USER_TYPES;
 ----------------------------------------------------------
 
@@ -249,7 +248,15 @@ FROM TOPICOS t, TABLE(t.referencias) r
 WHERE DEREF(VALUE(r)) IS OF (CONTATO)
 GROUP BY t.titulo
 HAVING COUNT(titulo) > 1;
---Tem como identifiar uma instancia (um id PK do modelo relacional)
+----------------------------------------------------------
+
+------------------QUESTÃO 4-------------------------------
+SET SERVEROUTPUT ON;
+DECLARE
+BEGIN
+                                            --mes, ano
+  dbms_output.put_line(pegar_dia_mais_ocupado(1, 2010));
+END;
 ----------------------------------------------------------
 
 ------------------QUESTÃO 4-------------------------------
@@ -259,14 +266,6 @@ GROUP BY t.titulo, sys_typeid(DEREF(VALUE(r)))
 HAVING COUNT(t.titulo) = 4;
 ----------------------------------------------------------
 
-
-SELECT ca.nome, ca.pai FROM CATEGORIAS ca;
-
-WITH pai AS (SELECT REF(ca) FROM CATEGORIAS ca WHERE pai = null),
-   filho AS (SELECT * FROM categorias WHERE pai != NULL)
-SELECT * FROM pai, filho
-WHERE filho.pai = pai;
-
 ------------------QUESTÃO C-------------------------------
 SELECT MAX(l) profundidade
 FROM 
@@ -275,28 +274,8 @@ FROM
   --START WITH pai = NULL 
   CONNECT BY PRIOR pai = REF(CA));
 ----------------------------------------------------------
-  
 
-SELECT *
-FROM CATEGORIAS ca
-START WITH pai = NULL 
-CONNECT BY PRIOR ca.pai = REF(ca);
-
-SELECT ca.pai.pai.pai.pai.pai FROM categorias ca;
-
-SELECT VALUE(ca), ca.pai FROM categorias ca;
-
-SELECT codigo, nome 
-FROM DIVISAO
-START WITH pai IS NULL
-CONNECT BY PRIOR codigo=pai
-
-CREATE TABLE t (t TIMESTAMP);
-DROP TABLE t;  
-INSERT INTO t VALUES (TIMESTAMP '2010-10-15 12:30:00');
-SELECT * FROM T;
-
-------------------QUESTÃO 3-------------------------------
+------------------QUESTÃO 3 RESOLUÇÃO---------------------
 CREATE OR REPLACE TYPE ATIVIDADE IS VARRAY (2) OF INTEGER NOT NULL;
 CREATE OR REPLACE TYPE ATIVIDADES IS TABLE OF ATIVIDADE NOT NULL;
 
@@ -314,7 +293,7 @@ CREATE OR REPLACE PROCEDURE imprime_atividades
   (atis ATIVIDADES)
 IS
 BEGIN
-  --dbms_output.put_line('Atividades:');
+  dbms_output.put_line('Atividades:');
   FOR i IN atis.FIRST .. atis.LAST LOOP
     imprime_atividade(atis(i));
   END LOOP;
@@ -329,28 +308,6 @@ BEGIN
   ati := ATIVIDADE(1,2);
   atis := ATIVIDADES(ati, ATIVIDADE(3,4));
   imprime_atividades(atis);
-END;
-
--- Exemplo de extracao de timestamps
-SET SERVEROUTPUT ON;
-DECLARE
-  t TIMESTAMP;
-  y INTEGER;
-  m INTEGER;
-  d INTEGER;
-  h INTEGER;
-  mi INTEGER;
-  s INTEGER;
-BEGIN
-  t := TIMESTAMP '2010-10-15 12:30:00';
-  y := EXTRACT(year FROM t);
-  m := EXTRACT(month FROM t);
-  d := EXTRACT(day FROM t);
-  h := EXTRACT(hour FROM t);
-  mi := EXTRACT(minute FROM t);
-  s := EXTRACT(second FROM t);
-  dbms_output.put_line(y || '/' || m || '/' || d || ' ' || h || ':' || 
-    mi || ':' || s);
 END;
 
 CREATE OR REPLACE FUNCTION timestamp_para_inteiro
@@ -389,6 +346,7 @@ BEGIN
   dbms_output.put_line('Diferentes:' || atividades_iguais(ati1, ati3));
 END;
 
+-- Retorna uma cópia de <atis> sem repetições
 CREATE OR REPLACE FUNCTION atividades_unicas
   (atis IN ATIVIDADES)
 RETURN ATIVIDADES
@@ -428,6 +386,7 @@ BEGIN
   imprime_atividades(unis);
 END;
 
+-- Retorna a divisão da atividade <ati> em duas no ponto <p>
 CREATE OR REPLACE FUNCTION parte_atividade
   (ati IN ATIVIDADE, p IN INTEGER)
 RETURN ATIVIDADES
@@ -458,7 +417,7 @@ BEGIN
   imprime_atividades(atis);
 END;
 
-
+-- Retorna uma cópia de <in_atis> removendo todas as instancias de <ati>
 CREATE OR REPLACE FUNCTION remove_atividade
   (in_atis IN ATIVIDADES, ati IN ATIVIDADE)
 RETURN ATIVIDADES
@@ -475,6 +434,7 @@ BEGIN
   RETURN atis;
 END;
 
+-- Teste remove_atividades
 SET SERVEROUTPUT ON;
 DECLARE
   novo_atis ATIVIDADES;
@@ -491,6 +451,7 @@ BEGIN
   END IF;
 END;
 
+-- Transforma um periodo em atividade para um determinado dia
 CREATE OR REPLACE FUNCTION pegar_atividade
   --Assume que o mês e ano do periodo são iguais
   (dia IN INTEGER, p IN periodo)
@@ -503,24 +464,12 @@ BEGIN
   dia_inicio := EXTRACT(DAY FROM p.inicio);
   IF dia = dia_inicio AND dia = EXTRACT(DAY FROM p.fim) THEN
     RETURN ATIVIDADES(ATIVIDADE(TIMESTAMP_PARA_INTEIRO(P.INICIO), 
-      TIMESTAMP_PARA_INTEIRO(P.FIM)));
-  ELSE
-    IF dia = dia_inicio THEN
-      nova_data := '2010-' || EXTRACT(MONTH FROM p.inicio) || '-' || (dia+1) ||
-        ' 00:00:00';
-      --TODO: não regorna nada (não adianta recursividade já que o dia é passado
-      RETURN conc_atividades(
-        atividades(atividade(timestamp_para_inteiro(p.inicio), 86400)),
-          pegar_atividade(dia, 
-            periodo(
-              CAST(TO_DATE(nova_data,'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP) , 
-                P.FIM
-              )));
-    END IF;
+                                TIMESTAMP_PARA_INTEIRO(P.FIM)));
   END IF;
   RETURN atividades();
 END;
 
+-- Retorna atividades que é uma cópia de <atis1> e <atis2>
 CREATE OR REPLACE FUNCTION conc_atividades
   (atis1 ATIVIDADES, atis2 ATIVIDADES)
 RETURN ATIVIDADES
@@ -539,8 +488,8 @@ BEGIN
   RETURN new_atis;
 END;
 
+-- Retorna o tempo ocupado de um dia em segundos
 CREATE OR REPLACE FUNCTION calcular_tempo
-  -- Funciona para periodos dentro do mesmo mês
   (dia INTEGER, ps S_PERIODO)
 RETURN INTEGER
 Is
@@ -560,11 +509,8 @@ BEGIN
   i := 1;
   LOOP
     EXIT WHEN i > atis.LAST;
-    --dbms_output.put_line('i '||i||' count '||atis(i)(1));
     att := atis(i);
     natis := atis;
---    dbms_output.put_line('debug');
---    imprime_atividades(natis);
     FOR j IN atis.FIRST .. atis.LAST LOOP    
       IF atis(j)(1) < att(1) AND atis(j)(2) > att(1) THEN
         natis := remove_atividade(natis, atis(j));
@@ -578,7 +524,6 @@ BEGIN
     atis := natis;
     i := i+1;
   END LOOP;
-  
   i := 1;
   LOOP
     EXIT WHEN i > atis.LAST;
@@ -592,8 +537,6 @@ BEGIN
     atis := atividades_unicas(natis);
     i := i+1;
   END LOOP;
-  --atis := atividades_unicas(atis);
-  --imprime_atividades(atis);
   tempo := 0;
   FOR j in atis.FIRST .. atis.LAST LOOP
     tempo := tempo + atis(j)(2) - atis(j)(1);
@@ -601,6 +544,7 @@ BEGIN
   RETURN tempo;
 END;
 
+-- Teste calcular tempo
 SET SERVEROUTPUT ON;
 DECLARE
   atis atividades;
@@ -622,8 +566,8 @@ BEGIN
   --imprime_atividades(atis);
 END;
 
-set serveroutput on;
-create or replace function pegar_dia_mais_ocupado
+-- Retorna o dia mais ocupado para um determinado mês
+CREATE OR REPLACE FUNCTION pegar_dia_mais_ocupado
   (mes in integer, ano in integer)
   return integer
 is
@@ -650,7 +594,6 @@ begin
     for i in psm.first..psm.last loop
       ps := conc_periodos(ps, normalizar_periodo(psm(i)));
     end loop;
-    imprime_periodo(ps);
   end loop;
   data_atual := to_date(ano || '-' || mes || '-1','YYYY-MM-DD');
   LOOP
@@ -670,18 +613,7 @@ begin
   RETURN dia;
 END;
 
-SET SERVEROUTPUT ON;
-DECLARE
-  d TIMESTAMP;
-  atis ATIVIDADES;
-  TYPE slot_mes IS VARRAY(31) OF INTEGER;
-  sm slot_mes;
-Begin
-  dbms_output.put_line(pegar_dia_mais_ocupado(1, 2010));
-  --d := TIMESTAMP '2010-10-2 23:00:00';
-  --dbms_output.put_line(d + INTERVAL '1' DAY);
-END;
-
+-- Retorna um periodo que é uma cópia de <p1> e <p2>
 CREATE OR REPLACE FUNCTION conc_periodos
   (p1 S_PERIODO, p2 S_PERIODO)
 RETURN S_PERIODO
@@ -700,6 +632,8 @@ BEGIN
   RETURN new_ps;
 END;
 
+-- Retorna tantos periodos quanto necessário para que o periodo máximo seja de
+--um dia.
 CREATE OR REPLACE FUNCTION normalizar_periodo
   (p PERIODO)
 RETURN s_periodo
@@ -720,7 +654,7 @@ BEGIN
     RETURN conc_periodos(normalizar_periodo(PERIODO(p.inicio, ultimo_dia)),
       normalizar_periodo(PERIODO(ultimo_dia + INTERVAL '1' SECOND, p.fim)));
       
-  end if;
+  END IF;
   mes_inicial := EXTRACT(MONTH FROM p.inicio);
   IF mes_inicial != EXTRACT(MONTH FROM p.fim) THEN
     ultimo_dia_mes := CAST(last_day(to_date(ano_inicial || '-' || mes_inicial ||
@@ -748,6 +682,7 @@ BEGIN
   END LOOP;
 END;
 
+-- Retorna periodos que são repetições de um determinado periodo
 create or replace function expandir_periodo
   (p periodo, r repeticao)
   return s_periodo
