@@ -129,7 +129,7 @@ INSERT INTO TOPICOS VALUES (CONTATO(
   'ja@example.com', -- email
   'http://www.exemple.com/ja' -- url
 ));
-INSERT INTO topicos VALUES (CONTATO( 
+INSERT INTO TOPICOS VALUES (CONTATO( 
   'Maria', -- titulo
   TIMESTAMP '2010-10-15 12:30:00', -- alteracao
   S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'FEUP')), -- categorias
@@ -141,152 +141,143 @@ INSERT INTO topicos VALUES (CONTATO(
   'http://www.exemple.com/mj' -- url
 ));
 ----------------------------------------------------------
------ BUH ----
+
 ------------------TAREFAS---------------------------------
-INSERT INTO topicos VALUES (TAREFA(
-    'Comprar papel' -- titulo
-  , TIMESTAMP '2010-10-15 12:30:00' -- alteracao
-  , S_CATEGORIA((SELECT REF(cc) FROM categorias cc WHERE cc.nome = 'Supermercado')) -- categorias
-  , S_TOPICO(  (SELECT REF(t) FROM topicos t WHERE titulo = 'João')
-             , (SELECT REF(t) FROM topicos t WHERE titulo = 'Maria')) -- referencias
-  , TIMESTAMP '2010-10-20 12:30:00'
-  , 'N'
-  , NULL
+INSERT INTO TOPICOS VALUES (TAREFA(
+  'Comprar papel', -- titulo
+  TIMESTAMP '2010-10-15 12:30:00', -- alteracao
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'Supermercado')), -- categorias
+  S_TOPICO((SELECT REF(t) FROM TOPICOS t WHERE titulo = 'João'), 
+    (SELECT REF(t) FROM TOPICOS t WHERE titulo = 'Maria')), -- referencias
+  TIMESTAMP '2010-10-20 12:30:00',
+  'N',
+  NULL
 ));
-INSERT INTO topicos VALUES (TAREFA(
-    'Pagar aluguel' -- titulo
-  , TIMESTAMP '2010-10-15 12:30:00' -- alteracao
-  , S_CATEGORIA((SELECT REF(cc) FROM categorias cc WHERE cc.nome = 'Outros')) -- categorias
-  , NULL -- referencias
-  , TIMESTAMP '2010-10-20 12:30:00' 
-  , 'N'
-  , NULL
+INSERT INTO TOPICOS VALUES (TAREFA(
+  'Pagar aluguel', -- titulo
+  TIMESTAMP '2010-10-15 12:30:00', -- alteracao
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'Outros')), -- categorias
+  NULL, -- referencias
+  TIMESTAMP '2010-10-20 12:30:00', 
+  'N',
+  NULL
 ));
-INSERT INTO topicos VALUES (TAREFA(
-    'Checar correspondencia' -- titulo
-  , TIMESTAMP '2010-10-15 12:30:00' -- alteracao
-  , S_CATEGORIA((SELECT REF(cc) FROM categorias cc WHERE cc.nome = 'Casa')) -- categorias
-  , NULL -- referencias
-  , TIMESTAMP '2010-10-20 12:30:00' 
-  , 'N'
-  , NULL
+INSERT INTO TOPICOS VALUES (TAREFA(
+  'Checar correspondencia', -- titulo
+  TIMESTAMP '2010-10-15 12:30:00', -- alteracao
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'Casa')), -- categorias
+  NULL, -- referencias
+  TIMESTAMP '2010-10-20 12:30:00', 
+  'N',
+  NULL
 ));
-----------------MEMO------------------------------
-INSERT INTO topicos VALUES (MEMO(
-    'Tipo' -- titulo
-  , TIMESTAMP '2010-10-15 12:30:00' -- alteracao
-  , S_CATEGORIA((SELECT REF(cc) FROM categorias cc WHERE cc.nome = 'Casa')) -- categorias
-  , NULL -- referencias
-  , 'Para usar o tipo set em uma tabela tem que usar nested table'
-));
-----------------CALENDARIO------------------------
-INSERT INTO topicos VALUES (CALENDARIO(
-    'Trabalho TBDA' -- titulo
-  , TIMESTAMP '2010-10-15 12:30:00' -- alteracao
-  , S_CATEGORIA((SELECT REF(cc) FROM categorias cc WHERE cc.nome = 'TBDA')) -- categorias
-  , S_TOPICO((SELECT REF(t) FROM topicos t WHERE titulo = 'Tipo'),
-             (SELECT REF(t) FROM topicos t WHERE titulo = 'Maria'))
-  , PERIODO(TIMESTAMP '2010-01-29 00:00:00', TIMESTAMP '2010-01-29 03:00:00')
-  , NULL
-));
-INSERT INTO topicos VALUES (CALENDARIO(
-    'Trabalho SRSI' -- titulo
-  , TIMESTAMP '2010-10-15 12:30:00' -- alteracao
-  , S_CATEGORIA((SELECT REF(cc) FROM categorias cc WHERE cc.nome = 'SRSI')) -- categorias
-  , S_TOPICO((SELECT REF(t) FROM topicos t WHERE titulo = 'João'))
-  , PERIODO(TIMESTAMP '2010-01-29 01:00:00', TIMESTAMP '2010-01-29 05:00:00')
-  , NULL
-));
-INSERT INTO topicos VALUES (CALENDARIO(
-    'Aula TBDA' -- titulo
-  , TIMESTAMP '2010-10-15 12:30:00' -- alteracao
-  , S_CATEGORIA((SELECT REF(cc) FROM categorias cc WHERE cc.nome = 'TBDA')) -- categorias
-  , NULL
-  , PERIODO(TIMESTAMP '2010-01-30 00:00:00', TIMESTAMP '2010-01-30 06:00:00')
-  , NULL
-));
--------------------------------------------------------------------------------------
+----------------------------------------------------------
 
-INSERT INTO topicos VALUES (CONTATO( 
-     -- titulo
-  , TIMESTAMP '2010-10-15 12:30:00' -- alteracao
-  , NULL -- categorias
-  , NULL -- referencias
-  , -- nome
-  , NULL -- Telefone
-  , NULL -- Morada
-  , '@example.com' -- email
-  , 'http://www.exemple.com/' -- url
-  ));
-  
-select type(t) from topicos t;
+------------------MEMO------------------------------------
+INSERT INTO TOPICOS VALUES (MEMO(
+  'Tipo' -- titulo
+  TIMESTAMP '2010-10-15 12:30:00', -- alteracao
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'Casa')), -- categorias
+  NULL, -- referencias
+  'Para usar o tipo set em uma tabela tem que usar nested table',
+));
+----------------------------------------------------------
 
----------------------QUESTÃO 1------------------------------------
-select co ntop, nome categoria, ut.type_name aplicacao
-from
-  (select count(value(ca)) co, value(ca).nome nome, sys_typeid(value(t)) sysid
-  from topicos t, table(t.categorias) ca
+------------------CALENDARIO------------------------------
+INSERT INTO TOPICOS VALUES (CALENDARIO(
+  'Trabalho TBDA', -- titulo
+  TIMESTAMP '2010-10-15 12:30:00', -- alteracao
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'TBDA')), -- categorias
+  S_TOPICO((SELECT REF(t) FROM TOPICOS t WHERE titulo = 'Tipo'),
+    (SELECT REF(t) FROM TOPICOS t WHERE titulo = 'Maria')),
+  PERIODO(TIMESTAMP '2010-01-29 00:00:00', TIMESTAMP '2010-01-29 03:00:00'),
+  NULL
+));
+INSERT INTO TOPICOS VALUES (CALENDARIO(
+  'Trabalho SRSI', -- titulo
+  TIMESTAMP '2010-10-15 12:30:00', -- alteracao
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'SRSI')), -- categorias
+  S_TOPICO((SELECT REF(t) FROM TOPICOS t WHERE titulo = 'João')),
+  PERIODO(TIMESTAMP '2010-01-29 01:00:00', TIMESTAMP '2010-01-29 05:00:00'),
+  NULL
+));
+INSERT INTO TOPICOS VALUES (CALENDARIO(
+  'Aula TBDA', -- titulo
+  TIMESTAMP '2010-10-15 12:30:00' -- alteracao
+  S_CATEGORIA((SELECT REF(cc) FROM CATEGORIAS cc WHERE cc.nome = 'TBDA')), -- categorias
+  NULL,
+  PERIODO(TIMESTAMP '2010-01-30 00:00:00', TIMESTAMP '2010-01-30 06:00:00'),
+  NULL
+));
+----------------------------------------------------------
+
+
+--################INTERROGACOES###########################
+------------------QUESTÃO 1-------------------------------
+SELECT co ntop, nome CATEGORIA, ut.type_name aplicacao
+FROM
+  (SELECT COUNT(VALUE(ca)) co, VALUE(ca).nome nome, sys_typeid(VALUE(t)) sysid
+  FROM TOPICOS t, TABLE(t.categorias) ca
   --where value(t) is of (calendario)
-  group by value(ca).nome, sys_typeid(value(t)))
-inner join user_types ut
-on ut.typeid = sysid and ut.supertype_name = 'TOPICO'
-order by categoria;
+  GROUP BY VALUE(ca).nome, sys_typeid(VALUE(t)))
+INNER JOIN user_types ut
+ON ut.typeid = sysid AND ut.supertype_name = 'TOPICO'
+ORDER BY categoria;
 -- Porque o sys_typeid não é unico?
 -- Como agrupar por tipo?
-select * from user_types;
+SELECT * FROM user_types;
+----------------------------------------------------------
 
----------------------QUESTÃO 2------------------------------------
-select titulo
-from topicos t, table(t.referencias) r 
-where deref(value(r)) is of (contato)
-group by t.titulo
-having count(titulo) > 1;
+------------------QUESTÃO 2-------------------------------
+SELECT titulo
+FROM TOPICOS t, TABLE(t.referencias) r 
+WHERE DEREF(VALUE(r)) IS OF (contato)
+GROUP BY t.titulo
+HAVING COUNT(titulo) > 1;
 --Tem como identifiar uma instancia (um id PK do modelo relacional)
+----------------------------------------------------------
 
----------------------QUESTÃO 3------------------------------------
+------------------QUESTÃO 3-------------------------------
 --Colocar granularidade no periodo.
 ----------------------------------------------------------
 
----------------------QUESTÃO 4------------------------------------
-select t.titulo, sys_typeid(deref(value(r)))
-from topicos t, table(t.referencias) r
-group by t.titulo, sys_typeid(deref(value(r)))
-having count(t.titulo) > 1;
+------------------QUESTÃO 4-------------------------------
+SELECT t.titulo, sys_typeid(DEREF(VALUE(r)))
+FROM TOPICOS t, TABLE(t.referencias) r
+GROUP BY t.titulo, sys_typeid(DEREF(VALUE(r)))
+HAVING COUNT(t.titulo) > 1;
 
-select ca.nome,ca.pai from categorias ca;
+SELECT ca.nome, ca.pai FROM CATEGORIAS ca;
 
-with pai as (select ref(ca) from categorias ca where pai = null),
-   filho as (select * from categorias where pai != null)
-select * from pai, filho
-where filho.pai = pai;
+WITH pai AS (SELECT REF(ca) FROM CATEGORIAS ca WHERE pai = null),
+   filho AS (SELECT * FROM categorias WHERE pai != NULL)
+SELECT * FROM pai, filho
+WHERE filho.pai = pai;
 
-select max(l) from (
-select LEVEL l
-from categorias ca
---start with pai = null 
-connect by prior pai = ref(ca));
+SELECT MAX(L) FROM (
+SELECT LEVEL l
+FROM CATEGORIAS ca
+--START WITH pai = NULL 
+CONNECT BY PRIOR pai = REF(ca));
 
-select *
-from categorias ca
-start with pai = null 
-connect by prior ca.pai = ref(ca);
+SELECT *
+FROM CATEGORIAS ca
+START WITH pai = NULL 
+CONNECT BY PRIOR ca.pai = REF(ca);
 
-select ca.pai.pai.pai.pai.pai from categorias ca;
+SELECT ca.pai.pai.pai.pai.pai FROM categorias ca;
 
-select value(ca), ca.pai from categorias ca;
+SELECT VALUE(ca), ca.pai FROM categorias ca;
 
-select codigo, nome 
-from divisao
-start with pai is null
-connect by prior codigo=pai
+SELECT codigo, nome 
+FROM DIVISAO
+START WITH pai IS NULL
+CONNECT BY PRIOR codigo=pai
 
-CREATE TABLE t (
-  t TIMESTAMP);
-DROP TABLE t;
-  
+CREATE TABLE t (t TIMESTAMP);
+DROP TABLE t;  
 INSERT INTO t VALUES (TIMESTAMP '2010-10-15 12:30:00');
-
-SELECT * from T;
+SELECT * FROM T;
 
 
 CREATE OR REPLACE TYPE ATIVIDADE IS VARRAY (2) OF INTEGER NOT NULL;
@@ -313,7 +304,7 @@ BEGIN
 END;
 
 -- Teste impressao
-SET serveroutput ON;
+SET SERVEROUTPUT ON;
 DECLARE
   ati ATIVIDADE;
   atis ATIVIDADES;
@@ -324,7 +315,7 @@ BEGIN
 END;
 
 -- Exemplo de extracao de timestamps
-SET serveroutput ON;
+SET SERVEROUTPUT ON;
 DECLARE
   t TIMESTAMP;
   y INTEGER;
@@ -349,7 +340,7 @@ CREATE OR REPLACE FUNCTION timestamp_para_inteiro
 RETURN INTEGER
 IS
 BEGIN
-  return EXTRACT(hour FROM t) * 3600 + EXTRACT(minute FROM t) * 60 + EXTRACT(second FROM t);
+  return EXTRACT(HOUR FROM t) * 3600 + EXTRACT(MINUTE FROM t) * 60 + EXTRACT(SECOND FROM t);
 END;
 
 CREATE OR REPLACE FUNCTION atividades_iguais
@@ -365,7 +356,7 @@ BEGIN
 END;
 
 -- Teste atividades iguais
-SET serveroutput ON;
+SET SERVEROUTPUT ON;
 DECLARE
   ati1 ATIVIDADE;
   ati2 ATIVIDADE;
@@ -388,7 +379,7 @@ BEGIN
   unis := ATIVIDADES();
   FOR i IN atis.FIRST .. atis.LAST LOOP
     f := 1;
-    IF unis.count != 0 THEN
+    IF unis.COUNT != 0 THEN
       FOR j IN unis.FIRST .. unis.LAST LOOP
         IF atividades_iguais(atis(i), unis(j)) = 1 THEN
           f := 0;
@@ -396,7 +387,7 @@ BEGIN
       END LOOP;
     END IF;
     IF f = 1 THEN
-      unis.extend;
+      unis.EXTEND;
       unis(unis.LAST) := atis(i);
     END IF;
   END LOOP;
@@ -404,7 +395,7 @@ BEGIN
 END;
 
 -- Teste atividades unicas
-SET serveroutput ON;
+SET SERVEROUTPUT ON;
 DECLARE
   atis ATIVIDADES;
   unis ATIVIDADES;
@@ -434,7 +425,7 @@ BEGIN
 END;
 
 -- Teste parte atividades
-SET serveroutput ON;
+SET SERVEROUTPUT ON;
 DECLARE
   ati ATIVIDADE;
   atis ATIVIDADES;
@@ -451,8 +442,8 @@ END;
 CREATE OR REPLACE FUNCTION remove_atividade
   (in_atis IN ATIVIDADES, ati IN ATIVIDADE)
 RETURN ATIVIDADES
-IS
-atis ATIVIDADES;
+is
+  atis ATIVIDADES;
 BEGIN
   atis := ATIVIDADES();
   FOR i IN in_atis.FIRST .. in_atis.LAST LOOP
@@ -464,266 +455,265 @@ BEGIN
   RETURN atis;
 END;
 
-set serveroutput on;
+SET SERVEROUTPUT ON;
 DECLARE
-novo_atis ATIVIDADES;
+  novo_atis ATIVIDADES;
 BEGIN
-novo_atis := remove_atividade(atividades(atividade(1,2), atividade(1,3)), atividade(1,2));
-dbms_output.put_line(novo_atis.count);
-if novo_atis.count > 0 then
-  for i in novo_atis.FIRST..novo_atis.LAST loop
-    if novo_atis.exists(i) then
-      dbms_output.put_line(novo_atis(i)(1) || ',' || novo_atis(i)(2));
-    end if;
-  end loop;
-end if;
+  novo_atis := remove_atividade(atividades(atividade(1,2), atividade(1,3)), atividade(1,2));
+  dbms_output.put_line(novo_atis.COUNT);
+  IF NOVO_ATIS.COUNT > 0 THEN
+    FOR i IN novo_atis.FIRST .. novo_atis.LAST LOOP
+      If novo_atis.EXISTS(i) THEN
+        dbms_output.put_line(novo_atis(i)(1) || ',' || novo_atis(i)(2));
+      END IF;
+    END LOOP;
+  END IF;
 END;
 
-create or replace function pegar_atividade
+CREATE OR REPLACE FUNCTION pegar_atividade
   --Assume que o mês e ano do periodo são iguais
-  (dia in integer, p in periodo)
-  RETURN ATIVIDADES
+  (dia IN INTEGER, p IN periodo)
+RETURN ATIVIDADES
 IS
   atis atividades;
-  dia_inicio integer;
+  dia_inicio INTEGER;
   nova_data VARCHAR(19);
-begin
-  dia_inicio := extract(day from p.inicio);
-  if dia = dia_inicio and dia = extract(day from p.fim) then
-    return atividades(atividade(timestamp_para_inteiro(p.inicio), timestamp_para_inteiro(p.fim)));
-  else
-    if dia = dia_inicio then
-      nova_data := '2010-' || extract(month from p.inicio) || '-' || (dia+1) || ' 00:00:00';
+BEGIN
+  dia_inicio := EXTRACT(DAY FROM p.inicio);
+  IF dia = dia_inicio AND dia = EXTRACT(DAY FROM p.fim) THEN
+    RETURN atividades(atividade(timestamp_para_inteiro(p.inicio), timestamp_para_inteiro(p.fim)));
+  ELSE
+    IF dia = dia_inicio THEN
+      nova_data := '2010-' || EXTRACT(MONTH FROM p.inicio) || '-' || (dia+1) || ' 00:00:00';
       --TODO: não regorna nada (não adianta recursividade já que o dia é passado
-      return conc_atividades(atividades(atividade(timestamp_para_inteiro(p.inicio), 86400)),
-                             pegar_atividade(dia, periodo(cast(TO_DATE(nova_data,'YYYY-MM-DD HH24:MI:SS') as timestamp) , p.fim)));
-    end if;
-  end if;
-  return atividades();
+      RETURN conc_atividades(atividades(atividade(timestamp_para_inteiro(p.inicio), 86400)),
+                             pegar_atividade(dia, periodo(CAST(TO_DATE(nova_data,'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP) , p.fim)));
+    END IF;
+  END IF;
+  RETURN atividades();
 END;
 
-create or replace function conc_atividades
-  (atis1 atividades, atis2 atividades)
-  return atividades
-is
+CREATE OR REPLACE FUNCTION conc_atividades
+  (atis1 ATIVIDADES, atis2 ATIVIDADES)
+RETURN ATIVIDADES
+IS
   new_atis atividades;
-begin
+BEGIN
   new_atis := atis1;
-  if atis2.count > 0 then
-    for i in atis2.first..atis2.last loop
-      if atis2.exists(i) then
-        new_atis.extend;
+  IF atis2.COUNT > 0 THEN
+    FOR i in atis2.FIRST .. atis2.LAST LOOP
+      If atis2.EXISTS(i) THEN
+        new_atis.EXTEND;
         new_atis(new_atis.LAST) := atis2(i);
       END IF;
-    end loop;
-  end if;
+    END LOOP;
+  END IF;
   RETURN new_atis;
 END;
 
-create or replace function calcular_tempo
+CREATE OR REPLACE FUNCTION calcular_tempo
   -- Funciona para periodos dentro do mesmo mês
-  (dia integer, ps s_periodo)
-  return integer
-is
-atis atividades;
-natis atividades;
-att atividade;
-tempo numeric;
-i integer;
-begin
+  (dia INTEGER, ps S_PERIODO)
+RETURN INTEGER
+Is
+  atis ATIVIDADES;
+  natis ATIVIDADES;
+  att ATIVIDADE;
+  tempo NUMERIC;
+  i INTEGER;
+BEGIN
   atis := ATIVIDADES();
-  for j in ps.first..ps.last loop
+  FOR j In ps.FIRST .. ps.LAST LOOP
     atis := conc_atividades(atis, pegar_atividade(dia, ps(j)));
-  end loop;
-  if atis.count < 1 then
-    return 0;
-  end if;
+  END LOOP;
+  IF atis.COUNT < 1 THEN
+    RETURN 0;
+  END if;
   i := 1;
-  loop
-    exit when i > atis.last;
+  LOOP
+    EXIT WHEN i > atis.LAST;
     --dbms_output.put_line('i '||i||' count '||atis(i)(1));
     att := atis(i);
     natis := atis;
 --    dbms_output.put_line('debug');
 --    imprime_atividades(natis);
-    for j in atis.first..atis.last loop    
-      if atis(j)(1) < att(1) and atis(j)(2) > att(1) then
+    FOR j IN atis.FIRST .. atis.LAST LOOP    
+      IF atis(j)(1) < att(1) AND atis(j)(2) > att(1) THEN
         natis := remove_atividade(natis, atis(j));
         natis := conc_atividades(natis, parte_atividade(atis(j), att(1)));
-      end if;
-      if atis(j)(1) < att(2) and atis(j)(2) > att(2) then
+      END IF;
+      IF atis(j)(1) < att(2) AND atis(j)(2) > att(2) THEN
         natis := remove_atividade(natis, atis(j));
         natis := conc_atividades(natis, parte_atividade(atis(j), att(2)));
-      end if;
-    end loop;
+      END IF;
+    END LOOP;
     atis := natis;
     i := i+1;
-  end loop;
+  END LOOP;
   
   i := 1;
-  loop
-    exit when i > atis.last;
+  LOOP
+    EXIT WHEN i > atis.LAST;
     att := atis(i);
     natis := atis;
-    for j in atis.first..atis.last loop
-      if atis(j)(1) > att(1) and atis(j)(2) < att(2) then
+    FOR j IN atis.FIRST .. atis.LAST LOOP
+      IF atis(j)(1) > att(1) AND atis(j)(2) < att(2) THEN
         natis := remove_atividade(natis, atis(j));
-      end if;
-    end loop;
+      END IF;
+    END LOOP;
     atis := atividades_unicas(natis);
     i := i+1;
-  end loop;
+  END LOOP;
   --atis := atividades_unicas(atis);
   --imprime_atividades(atis);
   tempo := 0;
-  for j in atis.first..atis.last loop
+  FOR j in atis.FIRST .. atis.LAST LOOP
     tempo := tempo + atis(j)(2) - atis(j)(1);
-  end loop;
-  return tempo;
-end;
+  END LOOP;
+  RETURN tempo;
+END;
 
 SET SERVEROUTPUT ON;
 DECLARE
   atis atividades;
   ps s_periodo;
-begin
-  --select t.periodo into ps from topicos t where value(t) is of calendario;
-  dbms_output.put_line(calcular_tempo(1, s_periodo(periodo(timestamp '2010-10-01 00:00:02',
-                                                           timestamp '2010-10-01 00:00:06'),
-                                                  periodo(timestamp '2010-10-01 00:00:07',
-                                                           timestamp '2010-10-01 00:00:09'),
-                                                  periodo(timestamp '2010-10-01 00:00:01',
-                                                           timestamp '2010-10-01 00:00:04'))));
-  --dbms_output.put_line(cast(to_date('2010-10-2 00:00:00', 'YYYY-MM-DD HH24:MI:SS') as timestamp));
-  --imprime_atividades(pegar_atividade(1, periodo(timestamp '2010-10-01 00:00:01', timestamp '2010-10-02 00:00:01')));
-  --atis := atividades(atividade(1,2));
+BEGIN
+  --SELECT t.periodo INTO ps FROM TOPICOS t WHERE VALUE(t) IS OF CALENDARIO;
+  dbms_output.put_line(calcular_tempo(1, s_periodo(
+    periodo(TIMESTAMP '2010-10-01 00:00:02', TIMESTAMP '2010-10-01 00:00:06'),
+    periodo(TIMESTAMP '2010-10-01 00:00:07', TIMESTAMP '2010-10-01 00:00:09'),
+    periodo(TIMESTAMP '2010-10-01 00:00:01', TIMESTAMP '2010-10-01 00:00:04'))));
+  --dbms_output.put_line(cast(to_date('2010-10-2 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP));
+  --imprime_atividades(pegar_atividade(1, PERIODO(TIMESTAMP '2010-10-01 00:00:01', TIMESTAMP '2010-10-02 00:00:01')));
+  --atis := ATIVIDADES(ATIVIDADE(1,2));
   --imprime_atividades(atis);
   --atis := conc_atividades(atis, ATIVIDADES(ATIVIDADE(3,4)));
   --imprime_atividades(atis);
 END;
 
-set serveroutput on;
-create or replace function pegar_dia_mais_ocupado
-  (mes in integer, ano in integer)
-  return integer
-is
-  ps s_periodo;
-  top topico;
-  dia integer;
-  tempo_max integer;
-  data_atual date;
-  type slot_mes is varray (31) of integer;
-  sm slot_mes;
-  cursor cur is
-    select value(t) from topicos t where value(t) is of (calendario);
-begin
+SET SERVEROUTPUT ON;
+CREATE OR REPLACE FUNCTION pegar_dia_mais_ocupado
+  (mes IN INTEGER, ano IN INTEGER)
+RETURN INTEGER
+IS
+  ps S_PERIODO;
+  top TOPICO;
+  dia INTEGER;
+  tempo_max INTEGER;
+  data_atual DATE;
+  TYPE SLOT_MES IS VARRAY(31) OF INTEGER;
+  sm SLOT_MES;
+  CURSOR cur IS
+    SELECT VALUE(t) FROM TOPICOS t WHERE VALUE(t) IS OF (CALENDARIO);
+BEGIN
   sm := slot_mes();
   ps := s_periodo();
-  open cur;
-  loop
-    fetch cur into top;
-    exit when cur%notfound;
-    ps.extend;
-    ps(ps.last) := treat(top as calendario).p;
-  end loop;
+  OPEN cur;
+  LOOP
+    FETCH cur INTO top;
+    EXIT WHEN cur%notfound;
+    ps.EXTEND;
+    ps(ps.LAST) := TREAT(top AS CALENDARIO).p;
+  END LOOP;
   data_atual := to_date(ano || '-' || mes || '-1','YYYY-MM-DD');
-  loop
-    exit when mes != extract(month from data_atual);
-    dia := extract(day from data_atual);
-    sm.extend;
-    sm(sm.last) := calcular_tempo(dia, ps);
-    data_atual := data_atual + interval '1' day;
-  end loop;
+  LOOP
+    EXIT WHEN mes != EXTRACT(MONTH FROM data_atual);
+    dia := EXTRACT(DAY FROM data_atual);
+    sm.EXTEND;
+    sm(sm.LAST) := calcular_tempo(dia, ps);
+    data_atual := data_atual + INTERVAL '1' DAY;
+  END LOOP;
   tempo_max := 0;
-  for i in sm.first..sm.last loop
-    if sm(i) > tempo_max then
+  FOR i In sm.FIRST .. sm.LAST LOOP
+    IF sm(i) > tempo_max THEN
       dia := i;
       tempo_max := sm(i);
-    end if;
-  end loop;
-  return dia;
-end;
-
-SET SERVEROUTPUT ON;
-declare
-d timestamp;
-atis atividades;
-type slot_mes is varray (31) of integer;
-sm slot_mes;
-begin
-  dbms_output.put_line(pegar_dia_mais_ocupado(1, 2010));
-  --d := timestamp '2010-10-2 23:00:00';
-  --dbms_output.put_line(d + interval '1' day);
-end;
-
-create or replace function conc_periodos
-  (p1 s_periodo, p2 s_periodo)
-  return s_periodo
-is
-  new_ps s_periodo;
-begin
-  new_ps := p1;
-  if p2.count > 0 then
-    for i in p2.first..p2.last loop
-      if p2.exists(i) then
-        new_ps.extend;
-        new_ps(new_ps.LAST) := p2(i);
-      END IF;
-    end loop;
-  end if;
-  return new_ps;
+    END IF;
+  END LOOP;
+  RETURN dia;
 END;
 
-create or replace function normalizar_periodo
-  (p periodo)
-  return s_periodo
-is
-ano_inicial integer;
-ultimo_dia timestamp;
-mes_inicial integer;
-ultimo_dia_mes timestamp;
-dia_inicial integer;
-ultima_hora timestamp;
-begin
-  ano_inicial := extract(year from p.inicio);
-  if ano_inicial != extract(year from p.fim) then
-    dbms_output.put_line(ano_inicial);
-    ultimo_dia := cast(to_date(ano_inicial || '-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS') as timestamp);
-    dbms_output.put_line(ano_inicial);
-    return conc_periodos(normalizar_periodo(periodo(p.inicio,
-                                           ultimo_dia)),
-                         normalizar_periodo(periodo(ultimo_dia + interval '1' second,
-                                                    p.fim)));
-  end if;
-  mes_inicial := extract(month from p.inicio);
-  if mes_inicial != extract(month from p.fim) then
-    ultimo_dia_mes := cast( last_day(to_date(ano_inicial || '-' || mes_inicial || '-3 23:59:59', 'YYYY-MM-DD HH24:MI:SS')) as timestamp);
-    return conc_periodos(normalizar_periodo(periodo(p.inicio, ultimo_dia_mes)),
-                         normalizar_periodo(periodo(ultimo_dia_mes + interval '1' second,
-                                                    p.fim)));
-  end if;
-  dia_inicial := extract(day from p.inicio);
-  if dia_inicial != extract(day from p.fim) then
-    ultima_hora := cast(to_date(ano_inicial || '-' || mes_inicial || '-' || dia_inicial || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS') as timestamp);
-    return conc_periodos(s_periodo(periodo(p.inicio, ultima_hora)),
-                         normalizar_periodo(periodo(ultima_hora + interval '1' second,
-                                                    p.fim)));
-  end if;
-  return s_periodo(p);
-end;
+SET SERVEROUTPUT ON;
+DECLARE
+  d TIMESTAMP;
+  atis ATIVIDADES;
+  TYPE slot_mes IS VARRAY(31) OF INTEGER;
+  sm slot_mes;
+Begin
+  dbms_output.put_line(pegar_dia_mais_ocupado(1, 2010));
+  --d := TIMESTAMP '2010-10-2 23:00:00';
+  --dbms_output.put_line(d + INTERVAL '1' DAY);
+END;
 
-create or replace procedure imprime_periodo
-  (p in s_periodo)
-is
-begin
-  for i in p.first..p.last loop
+CREATE OR REPLACE FUNCTION conc_periodos
+  (p1 S_PERIODO, p2 S_PERIODO)
+RETURN S_PERIODO
+Is
+  new_ps S_PERIODO;
+BEGIN
+  new_ps := p1;
+  IF P2.COUNT > 0 THEN
+    FOR i in p2.first .. p2.LAST LOOP
+      IF p2.EXISTS(i) THEN
+        new_ps.EXTEND;
+        new_ps(new_ps.LAST) := p2(i);
+      END IF;
+    END LOOP;
+  END IF;
+  RETURN new_ps;
+END;
+
+CREATE OR REPLACE FUNCTION normalizar_periodo
+  (p PERIODO)
+RETURN s_periodo
+IS
+  ano_inicial INTEGER;
+  ultimo_dia TIMESTAMP;
+  mes_inicial INTEGER;
+  ultimo_dia_mes TIMESTAMP;
+  dia_inicial INTEGER;
+  ultima_hora TIMESTAMP;
+BEGIN
+  ano_inicial := EXTRACT(YEAR FROM p.inicio);
+  IF ano_inicial != EXTRACT(YEAR FROM p.fim) THEN
+    dbms_output.put_line(ano_inicial);
+    ultimo_dia := CAST(to_date(ano_inicial || 
+      '-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP);
+    dbms_output.put_line(ano_inicial);
+    RETURN conc_periodos(normalizar_periodo(PERIODO(p.inicio, ultimo_dia)),
+      normalizar_periodo(PERIODO(ultimo_dia + INTERVAL '1' SECOND, p.fim)));
+      
+  end if;
+  mes_inicial := EXTRACT(MONTH FROM p.inicio);
+  IF mes_inicial != EXTRACT(MONTH FROM p.fim) THEN
+    ultimo_dia_mes := CAST(last_day(to_date(ano_inicial || '-' || mes_inicial ||
+      '-3 23:59:59', 'YYYY-MM-DD HH24:MI:SS')) AS TIMESTAMP);
+    RETURN conc_periodos(normalizar_periodo(PERIODO(p.inicio, ultimo_dia_mes)),
+      normalizar_periodo(PERIODO(ultimo_dia_mes + INTERVAL '1' SECOND, p.fim)));
+      
+  END IF;
+  dia_inicial := EXTRACT(DAY FROM p.inicio);
+  IF dia_inicial != EXTRACT(DAY FROM p.fim) THEN
+    ultima_hora := CAST(to_date(ano_inicial || '-' || mes_inicial || '-' ||
+      dia_inicial || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS') AS TIMESTAMP);
+    RETURN conc_periodos(S_PERIODO(PERIODO(p.inicio, ultima_hora)),
+      normalizar_periodo(PERIODO(ultima_hora + INTERVAL '1' SECOND, p.fim)));
+  END IF;
+  RETURN S_PERIODO(p);
+END;
+
+CREATE OR REPLACE PROCEDURE imprime_periodo
+  (p IN S_PERIODO)
+IS
+BEGIN
+  FOR i IN p.FIRST .. p.LAST LOOP
     dbms_output.put_line(p(i).inicio || ', ' || p(i).fim);
-  end loop;
-end;
+  END LOOP;
+END;
 
-set serveroutput on;
+set SERVEROUTPUT on;
 begin
-  --dbms_output.put_line(cast ('2010-12-12 23:59:59' as timestamp));
-  imprime_periodo(normalizar_periodo(periodo(timestamp '2010-10-01 00:00:02',
-                                             timestamp '2010-11-01 00:00:06')));
-end;
+  --dbms_output.put_line(CAST ('2010-12-12 23:59:59' AS TIMESTAMP));
+  imprime_periodo(normalizar_periodo(
+    PERIODO(timestamp '2010-10-01 00:00:02', TIMESTAMP '2010-11-01 00:00:06')));
+END;
