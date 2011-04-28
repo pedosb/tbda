@@ -166,7 +166,7 @@
 		\item O campo pai das categorias é uma referência para uma Categoria.
 		\item Os tópicos tem um conjunto de referências Categoria e um conjunto de referências Topico.
 		\item Os contatos contêm conjuntos de Morada e Telefone.
-		\item	E as repetições e calendários integram tipos de Periodo. 
+		\item E as repetições e calendários integram tipos de Periodo. 
 	\end{itemize}
 
 	\begin{multicols}{2}
@@ -254,21 +254,20 @@
 \section{Interrogações}
 
 	Apesar das respostas às perguntas estarem presentes nesta secção, o código relativo à criação de tipos, criação de tabelas, e preenchimento de dados irá estar presente no anexo do relatório.
-	A única resposta que não estará completamente respondida nesta secção e Questão 4, uma vez que a resposta a esta pergunta envolve a descrição de uma serie de procedimentos e funções em PL/SQL. No entanto, este código tambem esta presente em anexo.
+
+	A única resposta que não estará completamente respondida nesta secção é a Questão 4, uma vez que a resposta a esta pergunta envolve a descrição de uma série de procedimentos e funções PL/SQL. No entanto, todo este código também esta presente em anexo.
 
 \subsection{Questão 1}
 
 	\emph{Quantos tópicos há, em cada aplicação, para cada categoria?}\\
 
-	\begin{program}
-		%\verbatiminput{file.txt}
-		\caption{Legenda}
-		\label{sql:1}
-	\end{program}
+	\inputminted{sql}{1.sql}
 
 \subsection{Questão 2}
 
 	\emph{Quais os tópicos que têm referências a pelo menos três pessoas?}\\
+
+	\inputminted{sql}{2.sql}
 
 \subsection{Questão 3}
 
@@ -281,17 +280,23 @@
 	\begin{itemize}
 		\item	A solução implementada não tem restrições de granularidade, isto é, funciona com qualquer que seja a data do calendário introduzido. 
 	\end{itemize}
+	
+	\inputminted{sql}{3.sql}
 
 \subsection{Questão 4}
 
 	\emph{Quais os tópicos complexos que têm referências para tópicos de todas as aplicações?}\\
 
+	\inputminted{sql}{4.sql}
+
 \subsection{Questão C}
 
 	\emph{Como procederia para saber qual a profundidade da hierarquia de categorias?}\\
 
-	\inputminted{sql}{sql3.sql}
+	\inputminted{sql}{C.sql}
 
+
+\newpage 
 \section{Anexo - Código}
 
 	%\begin{minted}{sql}

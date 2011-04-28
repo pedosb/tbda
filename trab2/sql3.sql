@@ -214,38 +214,36 @@ INSERT INTO TOPICOS VALUES (CALENDARIO(
 
 --################INTERROGACOES###########################
 ------------------QUESTÃO 1-------------------------------
-SELECT co ntop, nome CATEGORIA, ut.type_name aplicacao
+SELECT co ntop, nome categoria, ut.type_name aplicacao
 FROM
-  (SELECT COUNT(VALUE(ca)) co, VALUE(ca).nome nome, sys_typeid(VALUE(t)) sysid
+  (SELECT COUNT(VALUE(ca)) co, VALUE(ca).nome nome, SYS_TYPEID(VALUE(t)) sysid
   FROM TOPICOS t, TABLE(t.categorias) ca
-  --where value(t) is of (calendario)
-  GROUP BY VALUE(ca).nome, sys_typeid(VALUE(t)))
-INNER JOIN user_types ut
-ON ut.typeid = sysid AND ut.supertype_name = 'TOPICO'
+  --WHERE VALUE(t) IS OF (CALENDARIO)
+  GROUP BY VALUE(ca).nome, SYS_TYPEID(VALUE(t)))
+INNER JOIN USER_TYPES ut
+ON ut.typeid = SYSID AND ut.supertype_name = 'TOPICO'
 ORDER BY categoria;
 -- Porque o sys_typeid não é unico?
 -- Como agrupar por tipo?
-SELECT * FROM user_types;
+SELECT * FROM USER_TYPES;
 ----------------------------------------------------------
 
 ------------------QUESTÃO 2-------------------------------
 SELECT titulo
 FROM TOPICOS t, TABLE(t.referencias) r 
-WHERE DEREF(VALUE(r)) IS OF (contato)
+WHERE DEREF(VALUE(r)) IS OF (CONTATO)
 GROUP BY t.titulo
 HAVING COUNT(titulo) > 1;
 --Tem como identifiar uma instancia (um id PK do modelo relacional)
-----------------------------------------------------------
-
-------------------QUESTÃO 3-------------------------------
---Colocar granularidade no periodo.
 ----------------------------------------------------------
 
 ------------------QUESTÃO 4-------------------------------
 SELECT t.titulo, sys_typeid(DEREF(VALUE(r)))
 FROM TOPICOS t, TABLE(t.referencias) r
 GROUP BY t.titulo, sys_typeid(DEREF(VALUE(r)))
-HAVING COUNT(t.titulo) > 1;
+HAVING COUNT(t.titulo) = 4;
+----------------------------------------------------------
+
 
 SELECT ca.nome, ca.pai FROM CATEGORIAS ca;
 
@@ -254,11 +252,15 @@ WITH pai AS (SELECT REF(ca) FROM CATEGORIAS ca WHERE pai = null),
 SELECT * FROM pai, filho
 WHERE filho.pai = pai;
 
-SELECT MAX(L) FROM (
-SELECT LEVEL l
-FROM CATEGORIAS ca
---START WITH pai = NULL 
-CONNECT BY PRIOR pai = REF(ca));
+------------------QUESTÃO C-------------------------------
+SELECT MAX(l) profundidade
+FROM 
+  (SELECT LEVEL l
+  FROM CATEGORIAS ca
+  --START WITH pai = NULL 
+  CONNECT BY PRIOR pai = REF(CA));
+----------------------------------------------------------
+  
 
 SELECT *
 FROM CATEGORIAS ca
@@ -279,7 +281,7 @@ DROP TABLE t;
 INSERT INTO t VALUES (TIMESTAMP '2010-10-15 12:30:00');
 SELECT * FROM T;
 
-
+------------------QUESTÃO 3-------------------------------
 CREATE OR REPLACE TYPE ATIVIDADE IS VARRAY (2) OF INTEGER NOT NULL;
 CREATE OR REPLACE TYPE ATIVIDADES IS TABLE OF ATIVIDADE NOT NULL;
 
