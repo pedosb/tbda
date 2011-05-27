@@ -1,0 +1,31 @@
+<!ELEMENT clinica (medico*, doente*)>
+
+<!ELEMENT nome (#PCDATA)>
+<!ELEMENT nif (#PCDATA)>
+<!ELEMENT morada (#PCDATA)>
+<!ELEMENT cod_postal (#PCDATA)>
+<!ELEMENT telefone (#PCDATA)>
+<!ELEMENT data_nasce (#PCDATA)>
+
+<!ELEMENT hora_inicio (#PCDATA)>
+<!ELEMENT preco (#PCDATA)>
+<!ELEMENT relatorio (#PCDATA)>
+
+<!ELEMENT consulta (hora_inicio, preco, relatorio)>
+   <!ATTLIST consulta SITUACAO (1|2|3|4|5) #REQUIRED>
+   <!ATTLIST consulta DOENTE IDREF #REQUIRED>
+
+<!ELEMENT dia (#PCDATA)>
+<!ELEMENT no_doentes (#PCDATA)>
+
+<!ELEMENT agenda (dia, hora_inicio, consulta*, no_doentes)>
+
+<!ELEMENT especialidade (#PCDATA)>
+
+<!ELEMENT medico (nome, agenda*, nif, morada, cod_postal, telefone, data_nasce, especialidade)>
+   <!ATTLIST medico CODM ID #REQUIRED>
+
+<!ELEMENT profissao (#PCDATA)>
+
+<!ELEMENT doente (nome, nif, morada, cod_postal, telefone, data_nasce, profissao)>
+   <!ATTLIST doente CODD ID #REQUIRED>

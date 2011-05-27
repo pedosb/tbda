@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--Validar com "xmllint - -dtdvalid clinica.dtd - -noout clinica.xml"-->
+<clinica>
+  <medico CODM="m1">
+    <nome>Fernando Rocha</nome>
+    <agenda>
+      <dia>2002-06-01</dia>
+      <hora_inicio>10</hora_inicio>
+      <consulta SITUACAO="2" DOENTE="d100">
+        <hora_inicio>10</hora_inicio>
+        <preco>50</preco>
+        <relatorio>Gripe</relatorio>
+      </consulta>
+      <consulta SITUACAO="5" DOENTE="d101">
+        <hora_inicio>11</hora_inicio>
+        <preco>30</preco>
+        <relatorio>Sarampo</relatorio>
+      </consulta>
+      <no_doentes>2</no_doentes>
+    </agenda>
+    <agenda>
+      <dia>2002-06-02</dia>
+      <hora_inicio>9</hora_inicio>
+      <consulta SITUACAO="1" DOENTE="d100">
+        <hora_inicio>9</hora_inicio>
+        <preco>40</preco>
+        <relatorio>Gripe</relatorio>
+      </consulta>
+      <consulta SITUACAO="3" DOENTE="d6">
+        <hora_inicio>10</hora_inicio>
+        <preco>0</preco>
+        <relatorio>Úlcera</relatorio>
+      </consulta>
+      <consulta SITUACAO="5" DOENTE="d104">
+        <hora_inicio>11</hora_inicio>
+        <preco>40</preco>
+        <relatorio>Gripe</relatorio>
+      </consulta>
+      <no_doentes>3</no_doentes>
+    </agenda>
+    <agenda>
+      <dia>2002-06-02</dia>
+      <hora_inicio>15</hora_inicio>
+      <consulta SITUACAO="3" DOENTE="d101">
+        <hora_inicio>15</hora_inicio>
+        <preco>40</preco>
+        <relatorio>Sarampo</relatorio>
+      </consulta>
+      <no_doentes>2</no_doentes>
+    </agenda>
+    <agenda>
+      <dia>2002-06-03</dia>
+      <hora_inicio>9</hora_inicio>
+      <no_doentes>3</no_doentes>
+    </agenda>
+    <nif>164325798</nif>
+    <morada>Rua Direita, 125</morada>
+    <cod_postal>4000-001</cod_postal>
+    <telefone>224783456</telefone>
+    <data_nasce>1965-11-11</data_nasce>
+    <especialidade>Medicina interna</especialidade>
+  </medico>
+  <medico CODM="m2">
+    <nome>Carla Antunes</nome>
+    <agenda>
+      <dia>2002-06-01</dia>
+      <hora_inicio>10</hora_inicio>
+      <consulta SITUACAO="1" DOENTE="d102">
+        <hora_inicio>10</hora_inicio>
+        <preco>50</preco>
+        <relatorio>Miopia</relatorio>
+      </consulta>
+      <consulta SITUACAO="4" DOENTE="d103">
+        <hora_inicio>11</hora_inicio>
+        <preco>50</preco>
+        <relatorio>Glaucoma</relatorio>
+      </consulta>
+      <no_doentes>2</no_doentes>
+    </agenda>
+    <agenda>
+      <dia>2002-06-02</dia>
+      <hora_inicio>10</hora_inicio>
+      <consulta SITUACAO="3" DOENTE="d103">
+        <hora_inicio>10</hora_inicio>
+        <preco>30</preco>
+        <relatorio>Glaucoma</relatorio>
+      </consulta>
+      <consulta SITUACAO="1" DOENTE="d105">
+        <hora_inicio>11</hora_inicio>
+        <preco>40</preco>
+        <relatorio>Miopia</relatorio>
+      </consulta>
+      <no_doentes>2</no_doentes>
+    </agenda>
+    <agenda>
+      <dia>2002-06-02</dia>
+      <hora_inicio>16</hora_inicio>
+      <consulta SITUACAO="3" DOENTE="d6">
+        <hora_inicio>15</hora_inicio>
+        <preco>0</preco>
+        <relatorio>Cataratas</relatorio>
+      </consulta>
+      <consulta SITUACAO="1" DOENTE="d104">
+        <hora_inicio>16</hora_inicio>
+        <preco>40</preco>
+        <relatorio>Miopia</relatorio>
+      </consulta>
+      <no_doentes>1</no_doentes>
+    </agenda>
+    <agenda>
+      <dia>2002-06-03</dia>
+      <hora_inicio>9</hora_inicio>
+      <consulta SITUACAO="2" DOENTE="d103">
+        <hora_inicio>10</hora_inicio>
+        <preco>30</preco>
+        <relatorio>Glaucoma</relatorio>
+      </consulta>
+      <consulta SITUACAO="1" DOENTE="d102">
+        <hora_inicio>11</hora_inicio>
+        <preco>30</preco>
+        <relatorio>Miopia</relatorio>
+      </consulta>
+      <no_doentes>3</no_doentes>
+    </agenda>
+    <nif>753422098</nif>
+    <morada>Rua do Ouro, 156</morada>
+    <cod_postal>4000-002</cod_postal>
+    <telefone>226978645</telefone>
+    <data_nasce>1968-10-05</data_nasce>
+    <especialidade>Oftalmologia</especialidade>
+  </medico>
+  <medico CODM="m3">
+    <nome>Luís Pereira</nome>
+    <agenda>
+      <dia>2002-06-01</dia>
+      <hora_inicio>10</hora_inicio>
+      <consulta SITUACAO="3" DOENTE="d106">
+        <hora_inicio>10</hora_inicio>
+        <preco>30</preco>
+        <relatorio>Gripe</relatorio>
+      </consulta>
+      <consulta SITUACAO="2" DOENTE="d105">
+        <hora_inicio>11</hora_inicio>
+        <preco>50</preco>
+        <relatorio>Gripe</relatorio>
+      </consulta>
+      <no_doentes>2</no_doentes>
+    </agenda>
+    <agenda>
+      <dia>2002-06-02</dia>
+      <hora_inicio>10</hora_inicio>
+      <consulta SITUACAO="1" DOENTE="d105">
+        <hora_inicio>10</hora_inicio>
+        <preco>30</preco>
+        <relatorio>Alergia</relatorio>
+      </consulta>
+      <consulta SITUACAO="5" DOENTE="d6">
+        <hora_inicio>11</hora_inicio>
+        <preco>0</preco>
+        <relatorio>Obesidade</relatorio>
+      </consulta>
+      <no_doentes>2</no_doentes>
+    </agenda>
+    <agenda>
+      <dia>2002-06-03</dia>
+      <hora_inicio>9</hora_inicio>
+      <consulta SITUACAO="1" DOENTE="d101">
+        <hora_inicio>10</hora_inicio>
+        <preco>40</preco>
+        <relatorio>Sarampo</relatorio>
+      </consulta>
+      <no_doentes>2</no_doentes>
+    </agenda>
+    <nif>797448393</nif>
+    <morada>Rua de Angola, 23</morada>
+    <cod_postal>4400-001</cod_postal>
+    <telefone>226133245</telefone>
+    <data_nasce>1955-10-05</data_nasce>
+    <especialidade>Medicina interna</especialidade>
+  </medico>
+  <medico CODM="m4">
+    <nome>Anísio Costa</nome>
+    <agenda>
+      <dia>2002-06-01</dia>
+      <hora_inicio>10</hora_inicio>
+      <consulta SITUACAO="4" DOENTE="d5">
+        <hora_inicio>10</hora_inicio>
+        <preco>0</preco>
+        <relatorio>Enfarte</relatorio>
+      </consulta>
+      <consulta SITUACAO="1" DOENTE="d104">
+        <hora_inicio>11</hora_inicio>
+        <preco>40</preco>
+        <relatorio>Angina</relatorio>
+      </consulta>
+      <no_doentes>2</no_doentes>
+    </agenda>
+    <agenda>
+      <dia>2002-06-02</dia>
+      <hora_inicio>9</hora_inicio>
+      <consulta SITUACAO="2" DOENTE="d5">
+        <hora_inicio>9</hora_inicio>
+        <preco>0</preco>
+        <relatorio>Enfarte</relatorio>
+      </consulta>
+      <no_doentes>3</no_doentes>
+    </agenda>
+    <agenda>
+      <dia>2002-06-03</dia>
+      <hora_inicio>10</hora_inicio>
+      <consulta SITUACAO="4" DOENTE="d5">
+        <hora_inicio>11</hora_inicio>
+        <preco>0</preco>
+        <relatorio>Angina</relatorio>
+      </consulta>
+      <no_doentes>2</no_doentes>
+    </agenda>
+    <nif>484764022</nif>
+    <morada>Rua de Angola, 23</morada>
+    <cod_postal>4400-001</cod_postal>
+    <telefone>226133245</telefone>
+    <data_nasce>1958-10-05</data_nasce>
+    <especialidade>Cardiologia</especialidade>
+  </medico>
+  <medico CODM="m5">
+    <nome>José Costa</nome>
+    <nif>298487232</nif>
+    <morada>Rua de Angola, 23</morada>
+    <cod_postal>4400-001</cod_postal>
+    <telefone>226133245</telefone>
+    <data_nasce>1955-10-05</data_nasce>
+    <especialidade>Medicina interna</especialidade>
+  </medico>
+  <medico CODM="m6">
+    <nome>Ricardo Almeida</nome>
+    <nif>979822329</nif>
+    <morada>Rua de Cedofeita, 445</morada>
+    <cod_postal>4100-001</cod_postal>
+    <telefone>226573245</telefone>
+    <data_nasce>1955-10-15</data_nasce>
+    <especialidade>Cardiologia</especialidade>
+  </medico>
+  <medico CODM="m7">
+    <nome>José Martins</nome>
+    <nif>513287234</nif>
+    <morada>Rua do Ouro, 156</morada>
+    <cod_postal>4000-002</cod_postal>
+    <telefone>226978645</telefone>
+    <data_nasce>1965-11-15</data_nasce>
+    <especialidade>Cardiologia</especialidade>
+  </medico>
+  <medico CODM="m8">
+    <nome>Rui Peres</nome>
+    <nif>274632298</nif>
+    <morada>Avenida da República, 102</morada>
+    <cod_postal>4000-003</cod_postal>
+    <telefone>224883545</telefone>
+    <data_nasce>1968-10-15</data_nasce>
+    <especialidade>Oftalmologia</especialidade>
+  </medico>
+  <doente CODD="d100">
+    <nome>Miguel Cunha</nome>
+    <nif>316808089</nif>
+    <morada>Rua Souto, 311</morada>
+    <cod_postal>4000-003</cod_postal>
+    <telefone>224163879</telefone>
+    <data_nasce>1971-01-05</data_nasce>
+    <profissao>Professor</profissao>
+  </doente>
+  <doente CODD="d102">
+    <nome>Nuno Trindade </nome>
+    <nif>215108033</nif>
+    <morada>Rua da Grandra, 222</morada>
+    <cod_postal>4000-002</cod_postal>
+    <telefone>226523422</telefone>
+    <data_nasce>1968-12-17</data_nasce>
+    <profissao>Engenheiro</profissao>
+  </doente>
+  <doente CODD="d103">
+    <nome>Manuel Pinheiro </nome>
+    <nif>113121232</nif>
+    <morada>Rua de S. Mamede, 12</morada>
+    <cod_postal>4000-001</cod_postal>
+    <telefone>223521212</telefone>
+    <data_nasce>1965-10-15</data_nasce>
+    <profissao>Motorista</profissao>
+  </doente>
+  <doente CODD="d101">
+    <nome>Sónia Silva </nome>
+    <nif>221108082</nif>
+    <morada>Rua de Gaia, 111</morada>
+    <cod_postal>4400-001</cod_postal>
+    <telefone>220551122</telefone>
+    <data_nasce>1985-11-14</data_nasce>
+    <profissao>Professor</profissao>
+  </doente>
+  <doente CODD="d104">
+    <nome>José Rocha</nome>
+    <nif>111121982</nif>
+    <morada>Rua Sr. Matosinhos, 50</morada>
+    <cod_postal>4500-001</cod_postal>
+    <telefone>225333120</telefone>
+    <data_nasce>1967-08-06</data_nasce>
+    <profissao>Cabeleireiro</profissao>
+  </doente>
+  <doente CODD="d106">
+    <nome>Rui Rocha</nome>
+    <nif>116471982</nif>
+    <morada>Rua Sr. Matosinhos, 50</morada>
+    <cod_postal>4500-001</cod_postal>
+    <telefone>225333120</telefone>
+    <data_nasce>1997-02-24</data_nasce>
+    <profissao>Estudante</profissao>
+  </doente>
+  <doente CODD="d6">
+    <nome>Ricardo Almeida</nome>
+    <nif>979822329</nif>
+    <morada>Rua de Cedofeita, 445</morada>
+    <cod_postal>4100-001</cod_postal>
+    <telefone>226573245</telefone>
+    <data_nasce>1955-10-15</data_nasce>
+    <profissao>Cardiologia</profissao>
+  </doente>
+  <doente CODD="d5">
+    <nome>José Costa</nome>
+    <nif>298487232</nif>
+    <morada>Rua de Angola, 23</morada>
+    <cod_postal>4400-001</cod_postal>
+    <telefone>226133245</telefone>
+    <data_nasce>1955-10-05</data_nasce>
+    <profissao>Medicina interna</profissao>
+  </doente>
+  <doente CODD="d105">
+    <nome>Maria Rocha</nome>
+    <nif>756121982</nif>
+    <morada>Rua Sr. Matosinhos, 50</morada>
+    <cod_postal>4500-001</cod_postal>
+    <telefone>225333120</telefone>
+    <data_nasce>1968-08-06</data_nasce>
+    <profissao>Secretária</profissao>
+  </doente>
+</clinica>
+
