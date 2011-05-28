@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--Validar com "xmllint - -dtdvalid clinica.dtd - -noout clinica.xml"-->
+<!-- Testar xsl com "xsltproc clinica.xml"-->
+<!--<?xml-stylesheet type="text/xsl" href="dt_oftalmo.xsl"?>-->
+<?xml-stylesheet type="text/xsl" href="medico_consulta.xsl"?>
 <clinica>
   <medico CODM="m1">
     <nome>Fernando Rocha</nome>
