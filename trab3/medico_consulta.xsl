@@ -18,7 +18,14 @@
                         <xsl:for-each select="agenda">
                            <xsl:for-each select="consulta">
                               <tr>
-                                 <td><xsl:value-of select="preceding-sibling::dia"/></td>
+                                 <xsl:if test="position() = 1">
+                                    <td>
+                                       <xsl:attribute name="rowspan">
+                                          <xsl:value-of select="count(following-sibling::consulta)+1"/>
+                                       </xsl:attribute>
+                                       <xsl:value-of select="preceding-sibling::dia"/>
+                                    </td>
+                                 </xsl:if>
                                  <td align="center"><xsl:value-of select="hora_inicio"/></td>
                                  <td>
                                     <xsl:variable name="codd" select="@DOENTE"/>
