@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<!--PSB: no_doentes não bate com o número de consultas na agenda,
+     inconsistencia no DB?-->
 <!--Validar com "xmllint - -dtdvalid clinica.dtd - -noout clinica.xml"-->
 <!-- Testar xsl com "xsltproc clinica.xml"-->
 <!--<?xml-stylesheet type="text/xsl" href="dt_oftalmo.xsl"?>-->
