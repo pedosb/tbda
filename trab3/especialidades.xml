@@ -1,16 +1,13 @@
-<?xml version = '1.0' encoding = 'ISO-8859-1'?>
-<ROWSET>
-   <ROW num="1">
-      <DIA>2002-06-02 00:00:00</DIA>
-      <ESPECIALIDADE>Oftalmologia</ESPECIALIDADE>
-   </ROW>
-   <ROW num="2">
-      <DIA>2002-06-02 00:00:00</DIA>
-      <ESPECIALIDADE>Cardiologia</ESPECIALIDADE>
-   </ROW>
-   <ROW num="3">
-      <DIA>2002-06-02 00:00:00</DIA>
-      <ESPECIALIDADE>Medicina interna</ESPECIALIDADE>
-   </ROW>
-</ROWSET>
-
+<?xml version = '1.0' encoding = 'UTF-8'?> 
+<?xml-stylesheet href="especialidades.xsl" type="text/xsl"?> 
+<ROWSET> 
+   <ROW num="1"> 
+      <ESPECIALIDADE>Medicina interna</ESPECIALIDADE> 
+   </ROW> 
+   <ROW num="2"> 
+      <ESPECIALIDADE>Oftalmologia</ESPECIALIDADE> 
+   </ROW> 
+   <ROW num="3"> 
+      <ESPECIALIDADE>Cardiologia</ESPECIALIDADE> 
+   </ROW> 
+</ROWSET> 

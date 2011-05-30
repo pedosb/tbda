@@ -7,7 +7,7 @@ IS
   v_clob_par       CLOB;
   
 BEGIN               
-  v_sqlselect := 'SELECT DISTINCT a.dia, m.especialidade
+  v_sqlselect := 'SELECT DISTINCT  m.especialidade
                   FROM agenda a
                   INNER JOIN medico m
                   ON a.codm = m.codm
@@ -17,8 +17,9 @@ BEGIN
                   
    v_queryctx := DBMS_XMLQuery.newContext(v_sqlselect);
 
-   DBMS_XMLQuery.setEncodingTag(v_queryctx, 'ISO-8859-1');
-
+   dbms_xmlquery.setencodingtag(v_queryctx, 'ISO-8859-1');
+   dbms_xmlquery.setstylesheetheader(v_queryctx, 'especialidades_xsl', 'text/xsl');
+   --dbms_xmlquery.setxslt(v_queryctx, 'http://oraalu.fe.up.pt:7777/pls/especialidades_xsl');
    v_clob_par := DBMS_XMLQuery.getXML(v_queryctx);
    DBMS_XMLQuery.closeContext(v_queryctx);
    htp.p(v_clob_par);
@@ -26,5 +27,4 @@ EXCEPTION
   WHEN OTHERS THEN
     htp.p(SQLERRM);
 END;
-  
   

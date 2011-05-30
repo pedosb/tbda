@@ -1,4 +1,7 @@
-<xsl:stylesheet version="1.0"
+create or replace procedure especialidades_xsl
+is
+begin
+htp.p('<xsl:stylesheet version="1.0"
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
  <xsl:template match="/ROWSET">
@@ -12,4 +15,5 @@
    </body>
   </html>
  </xsl:template>
-</xsl:stylesheet>
+</xsl:stylesheet>');
+end;
