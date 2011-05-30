@@ -1,9 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!--PSB: no_doentes não bate com o número de consultas na agenda,
+<?xml version="1.0" encoding="UTF-8"?>
+<!--PSB: no_doentes nÃ£o bate com o nÃºmero de consultas na agenda,
      inconsistencia no DB?-->
 <!--Validar com "xmllint - -dtdvalid clinica.dtd - -noout clinica.xml"-->
 <!-- Testar xsl com "xsltproc clinica.xml"-->
-<!--<?xml-stylesheet type="text/xsl" href="dt_oftalmo.xsl"?>-->
+<!--
+<?xml-stylesheet type="text/xsl" href="dt_oftalmo.xsl"?>
+-->
 <?xml-stylesheet type="text/xsl" href="medico_consulta.xsl"?>
 <clinica>
   <medico CODM="m1">
@@ -34,7 +36,7 @@
       <consulta SITUACAO="3" DOENTE="d6">
         <hora_inicio>10</hora_inicio>
         <preco>0</preco>
-        <relatorio>Úlcera</relatorio>
+        <relatorio>Ãšlcera</relatorio>
       </consulta>
       <consulta SITUACAO="5" DOENTE="d104">
         <hora_inicio>11</hora_inicio>
@@ -135,7 +137,7 @@
     <especialidade>Oftalmologia</especialidade>
   </medico>
   <medico CODM="m3">
-    <nome>Luís Pereira</nome>
+    <nome>LuÃ­s Pereira</nome>
     <agenda>
       <dia>2002-06-01</dia>
       <hora_inicio>10</hora_inicio>
@@ -184,7 +186,7 @@
     <especialidade>Medicina interna</especialidade>
   </medico>
   <medico CODM="m4">
-    <nome>Anísio Costa</nome>
+    <nome>AnÃ­sio Costa</nome>
     <agenda>
       <dia>2002-06-01</dia>
       <hora_inicio>10</hora_inicio>
@@ -228,7 +230,7 @@
     <especialidade>Cardiologia</especialidade>
   </medico>
   <medico CODM="m5">
-    <nome>José Costa</nome>
+    <nome>JosÃ© Costa</nome>
     <nif>298487232</nif>
     <morada>Rua de Angola, 23</morada>
     <cod_postal>4400-001</cod_postal>
@@ -246,7 +248,7 @@
     <especialidade>Cardiologia</especialidade>
   </medico>
   <medico CODM="m7">
-    <nome>José Martins</nome>
+    <nome>JosÃ© Martins</nome>
     <nif>513287234</nif>
     <morada>Rua do Ouro, 156</morada>
     <cod_postal>4000-002</cod_postal>
@@ -257,7 +259,7 @@
   <medico CODM="m8">
     <nome>Rui Peres</nome>
     <nif>274632298</nif>
-    <morada>Avenida da República, 102</morada>
+    <morada>Avenida da RepÃºblica, 102</morada>
     <cod_postal>4000-003</cod_postal>
     <telefone>224883545</telefone>
     <data_nasce>1968-10-15</data_nasce>
@@ -291,7 +293,7 @@
     <profissao>Motorista</profissao>
   </doente>
   <doente CODD="d101">
-    <nome>Sónia Silva </nome>
+    <nome>SÃ³nia Silva </nome>
     <nif>221108082</nif>
     <morada>Rua de Gaia, 111</morada>
     <cod_postal>4400-001</cod_postal>
@@ -300,7 +302,7 @@
     <profissao>Professor</profissao>
   </doente>
   <doente CODD="d104">
-    <nome>José Rocha</nome>
+    <nome>JosÃ© Rocha</nome>
     <nif>111121982</nif>
     <morada>Rua Sr. Matosinhos, 50</morada>
     <cod_postal>4500-001</cod_postal>
@@ -327,7 +329,7 @@
     <profissao>Cardiologia</profissao>
   </doente>
   <doente CODD="d5">
-    <nome>José Costa</nome>
+    <nome>JosÃ© Costa</nome>
     <nif>298487232</nif>
     <morada>Rua de Angola, 23</morada>
     <cod_postal>4400-001</cod_postal>
@@ -342,7 +344,7 @@
     <cod_postal>4500-001</cod_postal>
     <telefone>225333120</telefone>
     <data_nasce>1968-08-06</data_nasce>
-    <profissao>Secretária</profissao>
+    <profissao>SecretÃ¡ria</profissao>
   </doente>
 </clinica>
 

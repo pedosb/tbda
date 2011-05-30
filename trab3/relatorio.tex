@@ -1,0 +1,104 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[top=3cm, bottom=2cm, left=3cm, right=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{verbatim}
+\usepackage{minted}
+
+\usepackage{float}
+\floatstyle{ruled}
+\newfloat{program}{thp}{lop}
+\floatname{program}{Script}
+
+\title{Tecnologias de Base de Dados\\
+\Large{Trabalho de BD e XML, usando PL/SQL na Web}}
+
+\author{André Fernandes (ei03107) \and Pedro Batista (ext10392)}
+
+\begin{document}
+
+\maketitle
+
+\section{Obtenha uma representação em XML da situação descrita.}
+\subsection{Defina a linguagem com um DTD apropriado, baseado na descrição da
+situação e no modelo relacional e colocando-se na perspectiva dos médicos. O
+resultado deve ter alguma flexibilidade e incluir elementos e atributos.}
+
+O DTD abaixo foi definido de modo a representar a clinica, observa-se que os
+dados estão ligados principalmente ao médico, com exceção do cliente, pois se
+este fosse associado diretamente a consulta implicaria numa grande redundância
+de dados.
+
+Outra especificidade do DTD apresentado é que a \emph{situacao} na
+\emph{consulta} foi modelada como atributo pois só assim é que podemos garantir
+que seu valor está no intervalo requerido.
+
+\inputminted{xml}{clinica.dtd}
+
+\subsection{Construa um documento instância do DTD acima que contenha pelo menos a
+informação das linhas a amarelo. Sugere-se a utilização de queries à BD para
+esse efeito.}
+
+A seguinte query foi elaborada de forma a retornar um documento instancia do DTD
+com todos os dados contidos na base de dados. É importante destacar, que nessa
+query os identificadores do médico e do cliente são modificados de forma introduzir
+um sufixo \emph{m} e \emph{c} respectivamente. Isto é necessário pois de acordo
+com a definição, um identificador XML deve começar por uma letra.
+
+O resultado da query é muito longo, por isso o XML resultante é apresentado em
+anexo na Seção~\ref{anex:xml_clinica}. Este foi validado com o DTD utilizando a
+biblioteca \emph{The XML C parser and toolkit of
+Gnome}\footnote{http://xmlsoft.org/} (libxml) especificamente utilizando o programa
+\emph{xmllint}\footnote{http://xmlsoft.org/xmllint.html} com o comando:
+\verb~xmllint --dtdvalid clinica.dtd --noout clinica.xml~
+
+\inputminted{sql}{clinica.sql}
+
+\section{Utilizando XSL sobre XML sobre SQL implemente os seguintes
+processamentos:}
+
+\subsection{Mostrar o nome e a data de nascimento dos oftalmologistas.}
+
+O seguinte XSL quando aplicado ao XML apresentado na
+Seção~\ref{anex:xml_clinica} transforma-o em uma tabela XHTML apresentando a
+data de nascimento e o nome dos oftalmologistas. O programa foi testado no
+navegador Firefox 4 e na biblioteca \emph{The XSLT C library for
+GNOME}\footnote{http://xmlsoft.org/XSLT/} (libsxlt) com o 
+seguinte comando: \verb~xsltproc clinica.xml~ o resultado é apresentado em anexo
+na Seção~\ref{anex:dt_oftalmo.xhml}.
+\inputminted{xml}{dt_oftalmo.xsl}
+
+\subsection{Mostrar o número e o nome dos médicos numa lista e, dentro de cada
+item, apresentar uma tabela com o dia e hora das respectivas consultas, com o
+nome do doente e o relatório.}
+
+O seguinte XSL também pode ser aplicado a instancia XML da
+Seção~\ref{anex:xml_clinica}, este produz em uma lista XHTML o nome dos médicos
+e em uma tabela o dia e a hora de suas consultas, este foi testado no navegador
+Firefox 4. O resultado utilizando a libxslt é apresentado em anexo na
+Seção~\ref{anex:medico_consulta.xhtml}.
+\inputminted{xml}{medico_consulta.xsl}
+
+\newpage 
+\section{Anexo}
+
+\subsection{XML representando os dados da base de dados}\label{anex:xml_clinica}
+\inputminted{xml}{clinica.xml}
+
+\subsection{Transformação do XML apresentado na Seção~\ref{anex:xml_clinica} de
+forma a mostrar a data de nascimento e o nome dos médicos
+oftalmologistas}\label{anex:dt_oftalmo.xhml}
+\inputminted{xml}{dt_oftalmo.xhtml}
+
+\subsection{Transformação do XML apresentado na Seção~\ref{anex:xml_clinica}
+para apresentar as consultas marcadas para cada
+médico}\label{anex:medico_consulta.xhtml}
+\inputminted{xml}{medico_consulta.xhtml}
+
+\end{document}
