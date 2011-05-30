@@ -22,10 +22,12 @@
 
 <!ELEMENT especialidade (#PCDATA)>
 
-<!ELEMENT medico (nome, agenda*, nif, morada, cod_postal, telefone, data_nasce, especialidade)>
+<!ELEMENT medico (nome, agenda*, nif, morada, cod_postal,
+      telefone, data_nasce, especialidade)>
    <!ATTLIST medico CODM ID #REQUIRED>
 
 <!ELEMENT profissao (#PCDATA)>
 
-<!ELEMENT doente (nome, nif, morada, cod_postal, telefone, data_nasce, profissao)>
+<!ELEMENT doente (nome, nif, morada, cod_postal,
+      telefone, data_nasce, profissao)>
    <!ATTLIST doente CODD ID #REQUIRED>
